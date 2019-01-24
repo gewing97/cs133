@@ -23,7 +23,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],  float c[
             // std::printf("vert min %d", vert_limit);
             for(int i = 0; i < vert_limit; i++){
                 int horz_limit = std::min(horizontal + horz_block_size, kK);
-                for(int k = 0; k < vert_limit; k++){
+                for(int k = 0; k < horz_limit; k++){
                     for(int j = 0; j < kJ; j += 2){
                         c[i][j] = a[i][k] * b[k][j];
                         c[i][j+1] = a[i][k] * b[k][j+1];
