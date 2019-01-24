@@ -12,8 +12,8 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],  float c[
     for (int i = 0; i < kI; ++i) {
         std::memset(c[i], 0, sizeof(float) * kJ);
     }
-    int const vert_block_size = 1;
-    int const horz_block_size = 1;
+    int const vert_block_size = 8;
+    int const horz_block_size = 8;
     #pragma omp parallel for
     for(int vertical = 0; vertical < kI; vertical += vert_block_size){
         for(int horizontal = 0; horizontal < kJ; horizontal += horz_block_size){
