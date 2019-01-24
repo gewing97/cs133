@@ -18,11 +18,11 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],  float c[
     int const horz_block_size = 8;
     #pragma omp parallel for
     for(int vertical = 0; vertical < kI; vertical += vert_block_size){
-        for(int horizontal = 0; horizontal < kJ; horizontal += horz_block_size){
+        for(int horizontal = 0; horizontal < kK; horizontal += horz_block_size){
             int vert_limit = std::min(vertical + vert_block_size, kI);
             // std::printf("vert min %d", vert_limit);
             for(int i = 0; i < vert_limit; i++){
-                int horz_limit = std::min(horizontal + horz_block_size, kJ);
+                int horz_limit = std::min(horizontal + horz_block_size, kK);
                 for(int k = 0; k < vert_limit; k++){
                     for(int j = 0; j < kJ; j += 2){
                         c[i][j] = a[i][k] * b[k][j];
