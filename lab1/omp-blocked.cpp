@@ -6,8 +6,8 @@
 
 // Using declarations, if any...
 
-const int PROD_BLOCK_SIZE = 16;
-const int MULT_BLOCK_SIZE = 16;
+const int PROD_BLOCK_SIZE = 24;
+const int MULT_BLOCK_SIZE = 64;
 const int BLOCK_SIZE = 2;
 
 void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
@@ -19,7 +19,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     #pragma omp parallel for
     for(int prod_row = 0; prod_row < kI; prod_row += PROD_BLOCK_SIZE){
         for(int mult_row = 0; mult_row < kK; mult_row += MULT_BLOCK_SIZE){
-            for(int j = 0; j < kJ; j += 2){
+            for(int j = 0; j < kJ; j += BLOCK_SIZE){
                 for(int i = prod_row; i < prod_row + PROD_BLOCK_SIZE; i += 2){
                     float temp_a = c[i][j];
                     float temp_b = c[i][j+1];
@@ -29,7 +29,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
                         temp_a += a[i][k] * b[k][j]; 
                         temp_b += a[i][k] * b[k][j+1];
                         temp_c += a[i+1][k] * b[k][j];
-                        temp_d += c[i+1][k] * b[k][j+1];
+                        temp_d += a[i+1][k] * b[k][j+1];
                     }
                     c[i][j] = temp_a;
                     c[i][j+1] = temp_b;
