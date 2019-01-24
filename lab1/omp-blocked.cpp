@@ -3,8 +3,10 @@
 #include "gemm.h"
 #include <vector>
 #include <cstring>
+#include <iostream>
 
 // Using declarations, if any...
+
 
 
 void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],  float c[kI][kJ]) {
@@ -18,6 +20,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],  float c[
     for(int vertical = 0; vertical < kI; vertical += vert_block_size){
         for(int horizontal = 0; horizontal < kJ; horizontal += horz_block_size){
             int vert_limit = std::min(vertical + vert_block_size, kI);
+            std::printf("vert min %d", vert_limit);
             for(int i = 0; i < vert_limit; i++){
                 int horz_limit = std::min(horizontal + horz_block_size, kJ);
                 for(int k = 0; k < vert_limit; k++){
