@@ -21,7 +21,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
         for(int mult_row = 0; mult_row < kK; mult_row += MULT_BLOCK_SIZE){
             for(int j = 0; j < kJ; j += 2){
                 int end_prod_row = std::min(prod_row + PROD_BLOCK_SIZE, kI);
-                for(int i = prod_row; i < int_prod_row; i += 2){
+                for(int i = prod_row; i < end_prod_row; i += 2){
                     float temp_a = c[i][j];
                     float temp_b = c[i][j+1];
                     float temp_c = c[i+1][j];
