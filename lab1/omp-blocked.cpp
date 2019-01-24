@@ -28,8 +28,8 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
                     for(int k = mult_row; k < mult_row + MULT_BLOCK_SIZE; k++){
                         temp_a += a[i][k] * b[k][j]; 
                         temp_b += a[i][k] * b[k][j+1];
-                        temp_c = a[i+1][k] * b[k][j];
-                        temp_d = c[i+1][k] * b[k][j+1];
+                        temp_c += a[i+1][k] * b[k][j];
+                        temp_d += c[i+1][k] * b[k][j+1];
                     }
                     c[i][j] = temp_a;
                     c[i][j+1] = temp_b;
