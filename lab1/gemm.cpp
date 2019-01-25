@@ -40,6 +40,9 @@ void GemmParallel(const float a[kI][kK], const float b[kK][kJ],
                   float c[kI][kJ]);
 void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
                          float c[kI][kJ]){
+  vector<vector<float>> a_vec(kI);
+  vector<vector<float>> b_vec(kK);
+  vector<vector<float>> c_vec(kI);
   for (int i = 0; i < kI; ++i) {
     a_vec[i].resize(kK);
     c_vec[i].resize(kJ);
