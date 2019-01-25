@@ -11,7 +11,6 @@
 #define VERT_BLOCK_SIZE 1024
 #define HORZ_BLOCK_SIZE 32
 
-
 void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],  float c[kI][kJ]) {
     #pragma omp parallel for 
     for (int i = 0; i < kI; ++i) {
@@ -19,7 +18,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],  float c[
     }
 
     int vert_limit, horz_limit, vertical, horizontal, i, k, j;
-    #pragma omp parallel for schedule(dynamic) private(vert_limit, horz_limit, vertical, horizontal, i, k, j)
+    #pragma omp parallel for schedule(static) private(vert_limit, horz_limit, vertical, horizontal, i, k, j)
     for(vertical = 0; vertical < kI; vertical += VERT_BLOCK_SIZE){
         //vert_limit = vertical + VERT_BLOCK_SIZE <= kI ? (vertical + VERT_BLOCK_SIZE) : kI;
         vert_limit = vertical + VERT_BLOCK_SIZE;
