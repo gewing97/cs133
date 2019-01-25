@@ -8,6 +8,8 @@
 
 // Using declarations, if any...
 
+#define VERT_BLOCK_SIZE 1024
+#define HORZ_BLOCK_SIZE 32
 
 
 void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],  float c[kI][kJ]) {
@@ -16,16 +18,14 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],  float c[
         std::memset(c[i], 0, sizeof(float) * kJ);
     }
 
-    int const vert_block_size = 1024;
-    int const horz_block_size = 32;
     int vert_limit, horz_limit, vertical, horizontal, i, k, j;
     #pragma omp parallel for schedule(dynamic) private(vert_limit, horz_limit, vertical, horizontal, i, k, j)
-    for(vertical = 0; vertical < kI; vertical += vert_block_size){
-        //vert_limit = vertical + vert_block_size <= kI ? (vertical + vert_block_size) : kI;
-        vert_limit = vertical + vert_block_size;
-        for(horizontal = 0; horizontal < kK; horizontal += horz_block_size){
-            //horz_limit = horizontal + horz_block_size <= kK ? (horizontal + horz_block_size) : kJ;
-            horz_limit = horizontal + horz_block_size;
+    for(vertical = 0; vertical < kI; vertical += VERT_BLOCK_SIZE){
+        //vert_limit = vertical + VERT_BLOCK_SIZE <= kI ? (vertical + VERT_BLOCK_SIZE) : kI;
+        vert_limit = vertical + VERT_BLOCK_SIZE;
+        for(horizontal = 0; horizontal < kK; horizontal += HORZ_BLOCK_SIZE){
+            //horz_limit = horizontal + HORZ_BLOCK_SIZE <= kK ? (horizontal + HORZ_BLOCK_SIZE) : kJ;
+            horz_limit = horizontal + HORZ_BLOCK_SIZE;
             for(i = vertical; i < vert_limit; i++){
                 for(k = horizontal; k < horz_limit; k+=8){
                     for(j = 0; j < kJ; j++){
