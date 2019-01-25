@@ -39,24 +39,7 @@ void GemmBaseline(const float a[kI][kK], const float b[kK][kJ],
 void GemmParallel(const float a[kI][kK], const float b[kK][kJ],
                   float c[kI][kJ]);
 void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
-                         float c[kI][kJ]){
-  vector<vector<float>> a_vec(kI);
-  vector<vector<float>> b_vec(kK);
-  vector<vector<float>> c_vec(kI);
-  for (int i = 0; i < kI; ++i) {
-    a_vec[i].resize(kK);
-    c_vec[i].resize(kJ);
-    std::memcpy(a_vec[i].data(), a[i], sizeof(float) * kK);
-  }
-  for (int k = 0; k < kK; ++k) {
-    b_vec[k].resize(kJ);
-    std::memcpy(b_vec[k].data(), b[k], sizeof(float) * kJ);
-  }
-  GemmBaseline(a_vec, b_vec, &c_vec);
-  for (int i = 0; i < kI; ++i) {
-    std::memcpy(c[i], c_vec[i].data(), sizeof(float) * kJ);
-  }
-}
+                         float c[kI][kJ]);
 
 void GemmSequential(const float a[kI][kK], const float b[kK][kJ],
                     float c[kI][kJ]) {
