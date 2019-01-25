@@ -27,11 +27,12 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],  float c[
             for(i = vertical; i < vert_limit; i++){
                 horz_limit = horizontal + horz_block_size <= kK ? (horizontal + horz_block_size) : kJ;
                 //horz_limit = horizontal + horz_block_size;
-                for(k = horizontal; k < horz_limit; k++){
+                for(k = horizontal; k < horz_limit; k+=8){
                     for(j = 0; j < kJ; j++){
-                        c[i][j] += a[i][k] * b[k][j];
-                    }
-                }
+                        c[i][j] += (a[i][k] * b[k][j]) + (a[i][k+1] * b[k+1][j]) + (a[i][k+2] * b[k+2][j]) + (a[i][k+3] * b[k+3][j]) + (a[i][k+4] * b[k+4][j]) + (a[i][k+5] * b[k+5][j]) + (a[i][k+6] * b[k+6][j]) + (a[i][k+7] * b[k+7][j]);
+			
+       		    }
+		}
             }
         }
    }
