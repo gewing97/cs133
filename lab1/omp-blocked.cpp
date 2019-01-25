@@ -30,9 +30,9 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],  float c[
                 //     std::printf("horz lim %d \n", horz_limit);
                 // }
                 for(int k = horizontal; k < horz_limit; k++){
-                    for(int j = 0; j < kJ; j += 2){
+                    for(int j = 0; j < kJ; j++){
                         c[i][j] = a[i][k] * b[k][j];
-                        c[i][j+1] = a[i][k] * b[k][j+1];
+                        // c[i][j+1] = a[i][k] * b[k][j+1];
                     }
                 }
             }
