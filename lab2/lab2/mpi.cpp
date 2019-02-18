@@ -5,6 +5,9 @@
 #include "../lab1/gemm.h"
 
 // Using declarations, if any...
+#define VERT_BLOCK_SIZE 64
+#define HORZ_BLOCK_SIZE 32
+
 
 void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
                          float c[kI][kJ]) {
