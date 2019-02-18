@@ -13,16 +13,35 @@
 
 void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
                          float c[kI][kJ]) {
-    for (int i = 0; i < kI; ++i) {
-        std::memset(c[i], 0, sizeof(float) * kJ);
+    int mpi_size;
+    int mpi_rank;
+
+    MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+
+    int num_rows_per = kI/mpi_size;
+
+    if(mpi_rank == 0){
+        for(int i = 1; i < mpi_size; i++){
+            MPI_send(a + (num_rows_per * i), num_rows_per * kK, MPI_FLOAT, i, 0, MPI_COMM_WORLD);
+            MPI_send(b, kK*kJ, MPI_FLOAT, i, 0, MPI_COMM_WORLD);
+        }
+    }
+    else{
+        MPI_recv(a + (num_rows_per * mpi_rank), num_rows_per * kK, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_recv(b, kK*kJ, MPI_FLOAT, 0, 0, MPI_STATUS_IGNORE);
     }
 
+    int offset = num_rows_per * mpi_rank;
+    for (int i = 0; i < num_rows_per; ++i) {
+        std::memset(c[offset + i], 0, sizeof(float) * kJ);
+    }
+
+
     int vert_limit, horz_limit, vertical, horizontal, i, k, j;
-    for(vertical = 0; vertical < kI; vertical += VERT_BLOCK_SIZE){
-        //vert_limit = vertical + VERT_BLOCK_SIZE <= kI ? (vertical + VERT_BLOCK_SIZE) : kI;
+    for(vertical = offset; vertical < num_rows_per; vertical += VERT_BLOCK_SIZE){
         vert_limit = vertical + VERT_BLOCK_SIZE;
         for(horizontal = 0; horizontal < kK; horizontal += HORZ_BLOCK_SIZE){
-            //horz_limit = horizontal + HORZ_BLOCK_SIZE <= kK ? (horizontal + HORZ_BLOCK_SIZE) : kJ;
             horz_limit = horizontal + HORZ_BLOCK_SIZE;
             for(i = vertical; i < vert_limit; i++){
                 for(k = horizontal; k < horz_limit; k+=8){
@@ -36,5 +55,14 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
                 }
             }
         }
-   }
+    }
+    if(mpi_rank == 0){
+        for(int i = 1; i < mpi_size; i++){
+            MPI_recv(c + (num_rows_per * i), num_rows_per * kJ, MPI_FLOAT, i, 0, MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+        }
+    }
+    else{
+        MPI_send(c + (num_rows_per * mpi_rank), num_rows_per * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD);
+    }  
+
 }
