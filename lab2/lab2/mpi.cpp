@@ -20,15 +20,16 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
 
     float (*temp_c)[kJ] = new float[kI][kJ]();
     
-    MPI_Request *requests = new MPI_Request[mpi_size - 1];
+    MPI_Request *requests; = new MPI_Request[mpi_size - 1];
     
     MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 
     int num_rows_per = kI/mpi_size;
     int offset = mpi_rank * num_rows_per;
-    if(mpi_rank == 0){
-        MPI_Scatter(a, num_rows_per * kK, MPI_FLOAT, NULL, 0, MPI_FLOAT, 0, MPI_COMM_WORLD);
+    if(mpi_rank == 0 && mpi_size > 1){
+        MPI_Request *requests = new MPI_Request[mpi_size - 1];
+        //MPI_Scatter(a, num_rows_per * kK, MPI_FLOAT, NULL, 0, MPI_FLOAT, 0, MPI_COMM_WORLD);
     	for(int i = 1; i < mpi_size; i++){
 	       printf("sending to %d\n", i);
 	       MPI_Isend(b, kK*kJ, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &requests[i-1]);	
@@ -41,7 +42,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     else{
 	    float (*a_portion)[kK] = new float[kI][kK];
         float (*b_portion)[kJ] = new float[kK][kJ]; 
-	    MPI_Scatter(NULL, num_rows_per * kK, MPI_FLOAT, a_portion + (num_rows_per * mpi_rank), num_rows_per * kK, MPI_FLOAT, 0, MPI_COMM_WORLD);
+	    //MPI_Scatter(NULL, num_rows_per * kK, MPI_FLOAT, a_portion + (num_rows_per * mpi_rank), num_rows_per * kK, MPI_FLOAT, 0, MPI_COMM_WORLD);
         MPI_Recv(b_portion, kK*kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         printf("process %d received\n",mpi_rank);
         a = a_portion;
@@ -70,7 +71,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
         }
     }
 
-    if(mpi_rank == 0){
+    if(mpi_rank == 0 && mpi_size > 1){
         for(int i = 1; i < mpi_size; i++){
             MPI_Irecv(c + (num_rows_per * i), num_rows_per * kJ, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &requests[i-1]);
 	    }
