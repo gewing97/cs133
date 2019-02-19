@@ -60,7 +60,6 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
         for(int k = 0; k < horz_blocks_per; k++){
             MPI_Irecv(b_portion + (HORZ_BLOCK_SIZE * k), HORZ_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, &b_requests[k]);
         }
-        // MPI_Recv(b_portion, kK*kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         for(int j = 0; j < vert_blocks_per; j++){
             MPI_Irecv(a_portion + (num_rows_per * mpi_rank) + (VERT_BLOCK_SIZE * j), VERT_BLOCK_SIZE * kK, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, &a_requests[j]);
         }
@@ -75,18 +74,18 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     for(vertical = offset; vertical < (offset + num_rows_per); vertical += VERT_BLOCK_SIZE){
         vert_limit = vertical + VERT_BLOCK_SIZE;
         if(mpi_rank != 0){
-            printf("vertical %d %d %12X\n", mpi_rank, request_num_v, &a_requests[request_num_v]);
+            //printf("vertical %d %d %12X\n", mpi_rank, request_num_v, &a_requests[request_num_v]);
             MPI_Wait(&a_requests[request_num_v], MPI_STATUS_IGNORE);
             if(request_num_v > 0){
                 MPI_Isend(c + (num_rows_per * mpi_rank) + (VERT_BLOCK_SIZE * (request_num_v - 1)), VERT_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, &c_requests[request_num_v - 1]);
             }
             request_num_v++;
-            printf("next vertical request %d %d\n", mpi_rank, request_num_v);
+            //printf("next vertical request %d %d\n", mpi_rank, request_num_v);
         }
         for(horizontal = 0; horizontal < kK; horizontal += HORZ_BLOCK_SIZE){
             horz_limit = horizontal + HORZ_BLOCK_SIZE;
             if(mpi_rank != 0 && request_num_h < horz_blocks_per){
-                printf("horizontal %d %d %12X\n", mpi_rank, request_num_h, &b_requests[request_num_h]);
+                //printf("horizontal %d %d %12X\n", mpi_rank, request_num_h, &b_requests[request_num_h]);
                 MPI_Wait(&b_requests[request_num_h], MPI_STATUSES_IGNORE);
                 request_num_h++;
             }
@@ -103,21 +102,21 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
             }
         }
     }
-    printf("1\n");
+    //printf("1\n");
 
     if(mpi_rank == 0 && mpi_size > 1){
         
         MPI_Waitall((mpi_size - 1) * horz_blocks_per, b_requests, MPI_STATUSES_IGNORE);
-        printf("2\n");
+        //printf("2\n");
         MPI_Waitall((mpi_size - 1) * vert_blocks_per, a_requests, MPI_STATUSES_IGNORE);
-        printf("3\n");
+        //printf("3\n");
         MPI_Waitall((mpi_size - 1) * vert_blocks_per, c_requests, MPI_STATUSES_IGNORE);
-        printf("4\n");
+        //printf("4\n");
     }
     else if(mpi_rank != 0){
         MPI_Isend(c + (num_rows_per * mpi_rank) + (VERT_BLOCK_SIZE * (vert_blocks_per - 1)), VERT_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, &c_requests[vert_blocks_per - 1]);
-        printf("send me daddy %d\n", mpi_rank);
+        //printf("send me daddy %d\n", mpi_rank);
         MPI_Waitall(vert_blocks_per, c_requests, MPI_STATUSES_IGNORE);
-        printf("waiting on the world to change %d\n", mpi_rank);
+        //printf("waiting on the world to change %d\n", mpi_rank);
     }  
 }
