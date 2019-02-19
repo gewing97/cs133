@@ -117,6 +117,6 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
         MPI_Isend(c + (num_rows_per * mpi_rank) + (VERT_BLOCK_SIZE * (vert_blocks_per - 1)), VERT_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, &c_requests[vert_blocks_per - 1]);
         printf("send me daddy %d\n", mpi_rank);
         MPI_Waitall(vert_blocks_per, c_requests, MPI_STATUSES_IGNORE);
-        printf("waiting on the world to change %d\n", mpi_rank)
+        printf("waiting on the world to change %d\n", mpi_rank);
     }  
 }
