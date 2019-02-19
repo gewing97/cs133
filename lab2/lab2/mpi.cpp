@@ -29,7 +29,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     }
     else{
         MPI_Recv(a + (num_rows_per * mpi_rank), num_rows_per * kK, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        MPI_Recv(b, kK*kJ, MPI_FLOAT, 0, 0, MPI_STATUS_IGNORE);
+        MPI_Recv(b, kK*kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     }
 
     int offset = num_rows_per * mpi_rank;
