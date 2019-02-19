@@ -18,8 +18,6 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     int mpi_size;
     int mpi_rank;
 
-    //float (*original)[kK] = c;
-    //c = new float[kI][kJ]();
     float (*temp_c)[kJ] = new float[kI][kJ]();
     
     MPI_Request *requests = new MPI_Request[mpi_size - 1];
@@ -30,37 +28,27 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     int num_rows_per = kI/mpi_size;
     int offset = mpi_rank * num_rows_per;
     if(mpi_rank == 0){
-
         MPI_Scatter(a, num_rows_per * kK, MPI_FLOAT, NULL, 0, MPI_FLOAT, 0, MPI_COMM_WORLD);
     	for(int i = 1; i < mpi_size; i++){
-	    printf("sending to %d\n", i);
-            //MPI_Scatter(a, num_rows_per * kK, MPI_FLOAT, NULL, NULL, MPI_FLOAT, 0, MPI_COMM_WORLD);
-	    //MPI_Isend(a + (num_rows_per * i), num_rows_per * kK, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &requests[i]);
-	    MPI_Isend(b, kK*kJ, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &requests[i-1]);	
-            //MPI_Wait(&requests[i],  MPI_STATUS_IGNORE);
-	}
-        //MPI_Scatter(a, num_rows_per * kK, MPI_FLOAT, NULL, 0, MPI_FLOAT, 0, MPI_COMM_WORLD);
-    	//MPI_Bcast(b, kK*kJ, MPI_FLOAT, 0, MPI_COMM_WORLD);
-	for (int i = 0; i < num_rows_per; ++i) {
-            //printf("some i: %d   %d   %d\n", i, mpi_rank, num_rows_per);
+	       printf("sending to %d\n", i);
+	       MPI_Isend(b, kK*kJ, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &requests[i-1]);	
+	    }
+	    for (int i = 0; i < num_rows_per; ++i) {
             std::memset(c[offset + i], 0, sizeof(float) * kJ);
         }
-	if(mpi_size > 1) MPI_Waitall(mpi_size - 1, requests, MPI_STATUSES_IGNORE);
+	    if(mpi_size > 1) MPI_Waitall(mpi_size - 1, requests, MPI_STATUSES_IGNORE);
     }
     else{
-	float (*a_portion)[kK] = new float[kI][kK];
+	    float (*a_portion)[kK] = new float[kI][kK];
         float (*b_portion)[kJ] = new float[kK][kJ]; 
-	MPI_Scatter(NULL, num_rows_per * kK, MPI_FLOAT, a_portion + (num_rows_per * mpi_rank), num_rows_per * kK, MPI_FLOAT, 0, MPI_COMM_WORLD);
-	//MPI_Bcast(b_portion, kK*kJ, MPI_FLOAT, 0, MPI_COMM_WORLD);
-	//MPI_Recv(a_portion + (num_rows_per * mpi_rank), num_rows_per * kK, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+	    MPI_Scatter(NULL, num_rows_per * kK, MPI_FLOAT, a_portion + (num_rows_per * mpi_rank), num_rows_per * kK, MPI_FLOAT, 0, MPI_COMM_WORLD);
         MPI_Recv(b_portion, kK*kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-    	printf("process %d received\n",mpi_rank);
-   	a = a_portion;
-	b = b_portion;
-    	c = new float[kI][kJ]();
+        printf("process %d received\n",mpi_rank);
+        a = a_portion;
+	    b = b_portion;
+        c = new float[kI][kJ]();
     }
 
-    //printf("some vitamin c : %f   %d\n", c[0][0], mpi_rank);
     printf("%d finished setup\n", mpi_rank);
 
     int vert_limit, horz_limit, vertical, horizontal, i, k, j;
@@ -83,17 +71,12 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     }
 
     if(mpi_rank == 0){
-	//MPI_Gather(temp_c, num_rows_per * kJ, MPI_FLOAT, c, num_rows_per * kJ, MPI_FLOAT, 0, MPI_COMM_WORLD);
         for(int i = 1; i < mpi_size; i++){
-            //printf("location %d\n", c + (num_rows_per * i));
-           MPI_Irecv(c + (num_rows_per * i), num_rows_per * kJ, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &requests[i-1]);
-	}
-	//c = original;
-	MPI_Waitall(mpi_size-1, requests, MPI_STATUSES_IGNORE);
+            MPI_Irecv(c + (num_rows_per * i), num_rows_per * kJ, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &requests[i-1]);
+	    }
+    	MPI_Waitall(mpi_size-1, requests, MPI_STATUSES_IGNORE);
     }
     else{
-	//printf("location %d\n", c + (num_rows_per * mpi_rank));
-       	//MPI_Gather(temp_c + (num_rows_per * mpi_rank), num_rows_per *kJ, MPI_FLOAT, NULL, num_rows_per * kJ, MPI_FLOAT, 0, MPI_COMM_WORLD);
-	MPI_Send(c + (num_rows_per * mpi_rank), num_rows_per * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD);
+        MPI_Send(c + (num_rows_per * mpi_rank), num_rows_per * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD);
     }  
 }
