@@ -39,7 +39,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
         }
 	    if(mpi_size > 1) MPI_Waitall(mpi_size - 1, requests, MPI_STATUSES_IGNORE);
     }
-    elif(mpi_rank != 0){
+    else if(mpi_rank != 0){
 	    float (*a_portion)[kK] = new float[kI][kK];
         float (*b_portion)[kJ] = new float[kK][kJ]; 
 	    //MPI_Scatter(NULL, num_rows_per * kK, MPI_FLOAT, a_portion + (num_rows_per * mpi_rank), num_rows_per * kK, MPI_FLOAT, 0, MPI_COMM_WORLD);
@@ -78,7 +78,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
 	    }
     	MPI_Waitall(mpi_size-1, requests, MPI_STATUSES_IGNORE);
     }
-    elif(mpi_rank != 0){
+    else if(mpi_rank != 0){
         MPI_Send(c + (num_rows_per * mpi_rank), num_rows_per * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD);
     }  
 }
