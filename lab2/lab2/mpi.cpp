@@ -75,7 +75,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     for(vertical = offset; vertical < (offset + num_rows_per); vertical += VERT_BLOCK_SIZE){
         vert_limit = vertical + VERT_BLOCK_SIZE;
         if(mpi_rank != 0){
-            printf("vertical %12X\n", &a_requests[request_num_v]);
+            //printf("vertical %12X\n", &a_requests[request_num_v]);
             MPI_Wait(&a_requests[request_num_v], MPI_STATUS_IGNORE);
             if(request_num_v > 0){
                 MPI_Isend(c + (num_rows_per * mpi_rank) + (VERT_BLOCK_SIZE * (request_num_v - 1)), VERT_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, &c_requests[request_num_v - 1]);
@@ -86,7 +86,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
         for(horizontal = 0; horizontal < kK; horizontal += HORZ_BLOCK_SIZE){
             horz_limit = horizontal + HORZ_BLOCK_SIZE;
             if(mpi_rank != 0){
-                printf("horizontal %12X\n", &b_requests[request_num_h]);
+                //printf("horizontal %12X\n", &b_requests[request_num_h]);
                 MPI_Wait(&b_requests[request_num_h], MPI_STATUSES_IGNORE);
                 request_num_h++;
             }
