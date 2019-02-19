@@ -108,7 +108,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
         MPI_Waitall((mpi_size - 1) * vert_blocks_per, a_requests, MPI_STATUSES_IGNORE);
         printf("2\n");
         MPI_Waitall((mpi_size - 1) * horz_blocks_per, b_requests, MPI_STATUSES_IGNORE);
-        printf("3\n")
+        printf("3\n");
         MPI_Waitall((mpi_size - 1) * vert_blocks_per, c_requests, MPI_STATUSES_IGNORE);
         printf("4\n");
     }
