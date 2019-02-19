@@ -18,8 +18,8 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
 
     float (*temp_c)[kJ] = new float[kI][kJ]();
     
-    MPI_Request *b_requests;
     MPI_Request *a_requests;
+    MPI_Request *b_requests;
     MPI_Request *c_requests;
 
 
@@ -32,7 +32,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     int horz_blocks_per = kK / HORZ_BLOCK_SIZE;
 
     if(mpi_rank == 0 && mpi_size > 1){
-        b_requests = new MPI_Request[(mpi_size -1) * horz_blocks_per];
+        b_requests = new MPI_Request[(mpi_size - 1) * horz_blocks_per];
         a_requests = new MPI_Request[(mpi_size - 1) * vert_blocks_per];
         c_requests = new MPI_Request[(mpi_size - 1) * vert_blocks_per];
         //MPI_Scatter(a, num_rows_per * kK, MPI_FLOAT, NULL, 0, MPI_FLOAT, 0, MPI_COMM_WORLD);
@@ -84,7 +84,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
         for(horizontal = 0; horizontal < kK; horizontal += HORZ_BLOCK_SIZE){
             horz_limit = horizontal + HORZ_BLOCK_SIZE;
             if(mpi_rank != 0){
-                int request = horizontal / HORZ_BLOCK_SIZE;
+                printf("is it this one?");
                 MPI_Wait(&b_requests[request_num_h], MPI_STATUSES_IGNORE);
                 request_num_h++;
             }
@@ -106,15 +106,9 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
         MPI_Waitall((mpi_size - 1) * horz_blocks_per, b_requests, MPI_STATUSES_IGNORE);
         MPI_Waitall((mpi_size - 1) * vert_blocks_per, a_requests, MPI_STATUSES_IGNORE);
         MPI_Waitall((mpi_size - 1) * vert_blocks_per, c_requests, MPI_STATUSES_IGNORE);
-        // MPI_Request *requests = new MPI_Request[mpi_size - 1];
-     //    for(int i = 1; i < mpi_size; i++){
-     //        MPI_Irecv(c + (num_rows_per * i), num_rows_per * kJ, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &requests[i-1]);
-	    // }
-    	// MPI_Waitall(mpi_size-1, requests, MPI_STATUSES_IGNORE);
     }
     else if(mpi_rank != 0){
         MPI_Isend(c + (num_rows_per * mpi_rank) + (VERT_BLOCK_SIZE * (vert_blocks_per - 1)), VERT_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, &c_requests[vert_blocks_per - 1]);
-        // MPI_Send(c + (num_rows_per * mpi_rank), num_rows_per * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD);
         MPI_Waitall(vert_blocks_per, c_requests, MPI_STATUSES_IGNORE);
     }  
 }
