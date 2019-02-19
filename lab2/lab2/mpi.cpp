@@ -85,7 +85,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
             horz_limit = horizontal + HORZ_BLOCK_SIZE;
             if(mpi_rank != 0){
                 int request = horizontal / HORZ_BLOCK_SIZE;
-                MPI_Wait(&c_requests[request_num_h], MPI_STATUSES_IGNORE);
+                MPI_Wait(&b_requests[request_num_h], MPI_STATUSES_IGNORE);
                 request_num_h++;
             }
             for(i = vertical; i < vert_limit; i++){
