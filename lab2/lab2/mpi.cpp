@@ -60,7 +60,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
         for(int k = 0; k < horz_blocks_per; k++){
             MPI_Irecv(b_portion + (HORZ_BLOCK_SIZE * k), HORZ_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, &b_requests[k]);
         }
-        MPI_Recv(b_portion, kK*kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        // MPI_Recv(b_portion, kK*kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         for(int j = 0; j < vert_blocks_per; j++){
             MPI_Irecv(a_portion + (num_rows_per * mpi_rank) + (VERT_BLOCK_SIZE * j), VERT_BLOCK_SIZE * kK, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, &a_requests[j]);
         }
