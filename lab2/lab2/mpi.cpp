@@ -16,6 +16,9 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     int mpi_size;
     int mpi_rank;
 
+    int a_portion[kI][kK];
+    int b_portion[kK][kJ];
+
     MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 
@@ -28,8 +31,8 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
         }
     }
     else{
-        MPI_Recv(a + (num_rows_per * mpi_rank), num_rows_per * kK, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        MPI_Recv(b, kK*kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(a_portion + (num_rows_per * mpi_rank), num_rows_per * kK, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(b_portion, kK*kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     }
 
     int offset = num_rows_per * mpi_rank;
@@ -47,10 +50,10 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
                 for(k = horizontal; k < horz_limit; k+=8){
                     for(j = 0; j < kJ; j++){
                         c[i][j] += 
-                            (a[i][k] * b[k][j]) + (a[i][k+1] * b[k+1][j]) + 
-                            (a[i][k+2] * b[k+2][j]) + (a[i][k+3] * b[k+3][j]) + 
-                            (a[i][k+4] * b[k+4][j]) + (a[i][k+5] * b[k+5][j]) + 
-                            (a[i][k+6] * b[k+6][j]) + (a[i][k+7] * b[k+7][j]);
+                            (a_portion[i][k] * b_portion[k][j]) + (a_portion[i][k+1] * b_portion[k+1][j]) + 
+                            (a_portion[i][k+2] * b_portion[k+2][j]) + (a_portion[i][k+3] * b_portion[k+3][j]) + 
+                            (a_portion[i][k+4] * b_portion[k+4][j]) + (a_portion[i][k+5] * b_portion[k+5][j]) + 
+                            (a_portion[i][k+6] * b_portion[k+6][j]) + (a_portion[i][k+7] * b_portion[k+7][j]);
                     }
                 }
             }
