@@ -47,7 +47,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
 	    for (int i = 0; i < num_rows_per; ++i) {
             std::memset(c[offset + i], 0, sizeof(float) * kJ);
         }
-	    // if(mpi_size > 1) MPI_Waitall(mpi_size - 1, b_requests, MPI_STATUSES_IGNORE);
+	    if(mpi_size > 1) MPI_Waitall(mpi_size - 1, b_requests, MPI_STATUSES_IGNORE);
     }
     else if(mpi_rank != 0){
 	    float (*a_portion)[kK] = new float[kI][kK];
@@ -91,7 +91,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     }
 
     if(mpi_rank == 0 && mpi_size > 1){
-        MPI_Waitall(mpi_size - 1, b_requests, MPI_STATUSES_IGNORE);
+        //MPI_Waitall(mpi_size - 1, b_requests, MPI_STATUSES_IGNORE);
         MPI_Waitall((mpi_size - 1) * vert_blocks_per, a_requests, MPI_STATUSES_IGNORE);
         MPI_Waitall((mpi_size - 1) * vert_blocks_per, c_requests, MPI_STATUSES_IGNORE);
         // MPI_Request *requests = new MPI_Request[mpi_size - 1];
