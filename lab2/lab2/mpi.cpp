@@ -22,8 +22,8 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     MPI_Request *b_requests;
     MPI_Request *c_requests;
 
-    float (*a_portion)[kK] = new float[kI][kK]();
-    float (*b_portion)[kJ] = new float[kK][kJ](); 
+    float (*a_portion)[kK] = new float[kI][kK];
+    float (*b_portion)[kJ] = new float[kK][kJ]; 
 
 
     MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
