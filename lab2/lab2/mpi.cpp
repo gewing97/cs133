@@ -67,16 +67,16 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
             MPI_Wait(a_requests, MPI_STATUS_IGNORE);
             //send processed portion of c
             if(vertical > offset){
-                if(vertical > offset + VERT_BLOCK_SIZE){
+                if(vertical > (offset + VERT_BLOCK_SIZE)){
                     MPI_Wait(c_requests, MPI_STATUS_IGNORE);
                     c_requests = new MPI_Request;
                 }
-                MPI_Isend(c + (num_rows_per * mpi_rank) + vertical - VERT_BLOCK_SIZE, VERT_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, c_requests);
+                MPI_Isend(c + vertical - VERT_BLOCK_SIZE, VERT_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, c_requests);
             }
             //request next portion of a
             if(vert_limit + VERT_BLOCK_SIZE < (offset + num_rows_per)){
                 a_requests = new MPI_Request;
-                MPI_Irecv(a_portion + (num_rows_per * mpi_rank) + vert_limit, VERT_BLOCK_SIZE * kK, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, a_requests);
+                MPI_Irecv(a_portion + vert_limit, VERT_BLOCK_SIZE * kK, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, a_requests);
             }
         } else if(mpi_size > 1){
             //send current portion of a
@@ -90,11 +90,11 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
             for(int proc = 1; proc < mpi_size; proc++){
                 //receive last part of c
                 if (vertical > offset){
-                    MPI_Irecv(c + (num_rows_per * proc) + vertical - VERT_BLOCK_SIZE, VERT_BLOCK_SIZE * kJ, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &c_requests[proc-1]);
+                    MPI_Irecv(c + vertical - VERT_BLOCK_SIZE, VERT_BLOCK_SIZE * kJ, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &c_requests[proc-1]);
                 }
                 //send next portion of a
                 if(vert_limit + VERT_BLOCK_SIZE < (offset + num_rows_per)){
-                    MPI_Isend(a + (num_rows_per * mpi_rank) + vert_limit, VERT_BLOCK_SIZE * kK, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &a_requests[proc-1]);
+                    MPI_Isend(a + vert_limit, VERT_BLOCK_SIZE * kK, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &a_requests[proc-1]);
                 }    
             }
         }
