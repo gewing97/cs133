@@ -16,11 +16,14 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     int mpi_size;
     int mpi_rank;
 
-    float (*temp_c)[kJ] = new float[kI][kJ]();
+    // float (*temp_c)[kJ] = new float[kI][kJ]();
     
     MPI_Request *a_requests;
     MPI_Request *b_requests;
     MPI_Request *c_requests;
+
+    float (*a_portion)[kK] = new float[kI][kK];
+    float (*b_portion)[kJ] = new float[kK][kJ]; 
 
 
     MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
@@ -52,8 +55,6 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
         }
     }
     else if(mpi_rank != 0){
-	    float (*a_portion)[kK] = new float[kI][kK];
-        float (*b_portion)[kJ] = new float[kK][kJ]; 
         a_requests = new MPI_Request[vert_blocks_per];
         c_requests = new MPI_Request[vert_blocks_per]; 
         b_requests = new MPI_Request[horz_blocks_per];
@@ -85,7 +86,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
             }
         } else if(mpi_size > 1){
             for(int proc = 1; proc < mpi_size; proc++){
-                MPI_Wait(&a_requests[(proc-1)*vert_blocks_per + request_num_v]);
+                MPI_Wait(&a_requests[(proc-1)*vert_blocks_per + request_num_v], MPI_STATUS_IGNORE);
                 if(request_num_v > 0){
                     MPI_Irecv(c + (num_rows_per * proc) + (VERT_BLOCK_SIZE * (request_num_v - 1)), VERT_BLOCK_SIZE * kJ, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &c_requests[(proc-1)*vert_blocks_per + request_num_h - 1]);
                 }
@@ -99,13 +100,13 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
             if(request_num_h < horz_blocks_per){
                 if(mpi_rank != 0){
                     //printf("horizontal %d %d %12X\n", mpi_rank, request_num_h, &b_requests[request_num_h]);
-                    MPI_Wait(&b_requests[request_num_h], MPI_STATUSES_IGNORE);
+                    MPI_Wait(&b_requests[request_num_h], MPI_STATUS_IGNORE);
                     if(request_num_h + 1 < horz_blocks_per){
                         MPI_Irecv(b_portion + (HORZ_BLOCK_SIZE * request_num_h), HORZ_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, &b_requests[request_num_h + 1]);
                     }
                 } else if (mpi_size > 1){
                     for(int proc = 1; proc < mpi_size; proc++){
-                        MPI_Wait(&b_requests[(proc-1)*horz_blocks_per + request_num_h]);
+                        MPI_Wait(&b_requests[(proc-1)*horz_blocks_per + request_num_h], MPI_STATUS_IGNORE);
                         if(request_num_h + 1 < horz_blocks_per){
                             MPI_Isend(b + (HORZ_BLOCK_SIZE * request_num_h), HORZ_BLOCK_SIZE * kJ, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &b_requests[(proc-1)*horz_blocks_per + request_num_h +1]);  
                         }
