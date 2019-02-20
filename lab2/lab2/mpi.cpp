@@ -48,7 +48,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
         //         MPI_Irecv(c + (num_rows_per * i) + (VERT_BLOCK_SIZE * j), VERT_BLOCK_SIZE * kJ, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &c_requests[(i-1)*vert_blocks_per + j]);
         //    }
             MPI_Isend(a + (num_rows_per * i) + (VERT_BLOCK_SIZE * 0), VERT_BLOCK_SIZE * kK, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &a_requests[i-1]);
-            MPI_Irecv(c + (num_rows_per * i) + (VERT_BLOCK_SIZE * 0), VERT_BLOCK_SIZE * kJ, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &c_requests[i-1]);
+            // MPI_Irecv(c + (num_rows_per * i) + (VERT_BLOCK_SIZE * 0), VERT_BLOCK_SIZE * kJ, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &c_requests[i-1]);
         }
 	    for (int i = 0; i < num_rows_per; ++i) {
             std::memset(c[offset + i], 0, sizeof(float) * kJ);
