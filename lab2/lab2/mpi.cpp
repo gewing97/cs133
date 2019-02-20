@@ -79,7 +79,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
                 MPI_Irecv(a_portion + vert_limit, VERT_BLOCK_SIZE * kK, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, a_requests);
             }
         } else if(mpi_size > 1){
-            printf("a_requests: %12X c_requests: %12X\n", a_requests, c_requests);
+            //printf("a_requests: %12X c_requests: %12X\n", a_requests, c_requests);
             //send current portion of a
             MPI_Waitall(mpi_size-1, a_requests, MPI_STATUSES_IGNORE);
             a_requests = new MPI_Request[mpi_size-1];
@@ -91,12 +91,12 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
             for(int proc = 1; proc < mpi_size; proc++){
                 //receive last part of c
                 if (vertical > offset){
-                    MPI_Irecv(c + vertical - VERT_BLOCK_SIZE, VERT_BLOCK_SIZE * kJ, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &c_requests[proc-1]);
+                    MPI_Irecv(c + (proc * vert_blocks_per) + vertical - VERT_BLOCK_SIZE, VERT_BLOCK_SIZE * kJ, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &c_requests[proc-1]);
                 }
                 //send next portion of a
                 if(vert_limit + VERT_BLOCK_SIZE <= (offset + num_rows_per)){
-                    printf("setting up request: %12X %d\n", a_requests, vert_limit + VERT_BLOCK_SIZE);
-                    MPI_Isend(a + (proc * vert_blocks_per) + (vert_limit - offset), VERT_BLOCK_SIZE * kK, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &a_requests[proc-1]);
+                    // printf("setting up a request: %d\n", vert_limit);
+                    MPI_Isend(a + (proc * vert_blocks_per) + vert_limit - offset, VERT_BLOCK_SIZE * kK, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &a_requests[proc-1]);
                 }    
             }
         }
@@ -110,7 +110,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
                         MPI_Irecv(b_portion + horz_limit, HORZ_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, b_requests);
                     }
                 } else if (mpi_size > 1){
-                    printf("b_requests: %12X\n", b_requests);
+                    // printf("b_requests: %d\n", horz_limit);
                     MPI_Waitall(mpi_size - 1, b_requests, MPI_STATUSES_IGNORE);
                     if(horz_limit + HORZ_BLOCK_SIZE < kK){
                         b_requests = new MPI_Request[mpi_size-1];
