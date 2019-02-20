@@ -133,7 +133,10 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     if(mpi_rank == 0 && mpi_size > 1){
         // MPI_Waitall((mpi_size - 1) * horz_blocks_per, b_requests, MPI_STATUSES_IGNORE);
         // MPI_Waitall((mpi_size - 1) * vert_blocks_per, a_requests, MPI_STATUSES_IGNORE);
-        MPI_Waitall(mpi_size - 1, c_requests, MPI_STATUSES_IGNORE);
+        // MPI_Waitall(mpi_size - 1, c_requests, MPI_STATUSES_IGNORE);
+        for(int proc = 1; proc < mpi_size; proc++){
+            MPI_Irecv(c + (num_rows_per * proc) + (VERT_BLOCK_SIZE * (request_num_v-1)), VERT_BLOCK_SIZE * kJ, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        }
     }
     else if(mpi_rank != 0){
         MPI_Send(c + (num_rows_per * mpi_rank) + (VERT_BLOCK_SIZE * (vert_blocks_per - 1)), VERT_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD);
