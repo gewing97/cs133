@@ -33,6 +33,9 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     //should improve performance since less overhead for such a small problem size
     while(mpi_size != 1 && kI/(mpi_size * VERT_BLOCK_SIZE) == 0) mpi_size = mpi_size/2;
 
+    //get rid of the unnecessary processes
+    if(mpi_rank >= mpi_size) return;
+
     int num_rows_per = kI/mpi_size;
     int offset = mpi_rank * num_rows_per;
     int vert_blocks_per = num_rows_per / VERT_BLOCK_SIZE;
