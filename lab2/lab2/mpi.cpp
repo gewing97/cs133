@@ -91,7 +91,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
             for(int proc = 1; proc < mpi_size; proc++){
                 //receive last part of c
                 if (vertical > offset){
-                    printf("setting up c request: %d\n", (proc * vert_blocks_per) + vertical - VERT_BLOCK_SIZE);
+                    printf("setting up c request: %d\n", (proc * num_rows_per) + vertical - VERT_BLOCK_SIZE);
                     MPI_Irecv(c + (proc * num_rows_per) + vertical - VERT_BLOCK_SIZE, VERT_BLOCK_SIZE * kJ, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &c_requests[proc-1]);
                 }
                 //send next portion of a
