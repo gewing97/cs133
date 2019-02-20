@@ -92,12 +92,12 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
                 //receive last part of c
                 if (vertical > offset){
                     printf("setting up c request: %d\n", (proc * vert_blocks_per) + vertical - VERT_BLOCK_SIZE);
-                    MPI_Irecv(c + (proc * vert_blocks_per) + vertical - VERT_BLOCK_SIZE, VERT_BLOCK_SIZE * kJ, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &c_requests[proc-1]);
+                    MPI_Irecv(c + (proc * num_rows_per) + vertical - VERT_BLOCK_SIZE, VERT_BLOCK_SIZE * kJ, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &c_requests[proc-1]);
                 }
                 //send next portion of a
                 if(vert_limit + VERT_BLOCK_SIZE <= (offset + num_rows_per)){
                     printf("setting up a request: %d\n", vert_limit);
-                    MPI_Isend(a + (proc * vert_blocks_per) + vert_limit - offset, VERT_BLOCK_SIZE * kK, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &a_requests[proc-1]);
+                    MPI_Isend(a + (proc * num_rows_per) + vert_limit - offset, VERT_BLOCK_SIZE * kK, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &a_requests[proc-1]);
                 }    
             }
         }
