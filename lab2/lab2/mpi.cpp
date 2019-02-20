@@ -22,8 +22,8 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     MPI_Request *b_requests;
     MPI_Request *c_requests;
 
-    float (*a_portion)[kK] = new float[kI][kK];
-    float (*b_portion)[kJ] = new float[kK][kJ]; 
+    float (*a_portion)[kK] = new float[kI][kK]();
+    float (*b_portion)[kJ] = new float[kK][kJ](); 
 
 
     MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
@@ -108,14 +108,14 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
             if(vertical == offset){
                 if(mpi_rank != 0){
                     MPI_Wait(b_requests, MPI_STATUS_IGNORE);
-                    if(horz_limit + HORZ_BLOCK_SIZE < kK){
+                    if(horz_limit + HORZ_BLOCK_SIZE <= kK){
                         b_requests = new MPI_Request;
                         MPI_Irecv(b_portion + horz_limit, HORZ_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, b_requests);
                     }
                 } else if (mpi_size > 1){
                     // printf("b_requests: %d\n", horz_limit);
                     MPI_Waitall(mpi_size - 1, b_requests, MPI_STATUSES_IGNORE);
-                    if(horz_limit + HORZ_BLOCK_SIZE < kK){
+                    if(horz_limit + HORZ_BLOCK_SIZE <= kK){
                         b_requests = new MPI_Request[mpi_size-1];
                         for(int proc = 1; proc < mpi_size; proc++){
                             MPI_Isend(b + horz_limit, HORZ_BLOCK_SIZE * kJ, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, &b_requests[proc-1]);  
@@ -139,7 +139,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
 
     if(mpi_rank == 0 && mpi_size > 1){
         for(int proc = 1; proc < mpi_size; proc++){
-            printf("setup send %d\n", (num_rows_per * proc) + (VERT_BLOCK_SIZE * (vert_blocks_per - 1)));
+            printf("setup request %d\n", (num_rows_per * proc) + (VERT_BLOCK_SIZE * (vert_blocks_per - 1)));
             MPI_Recv(c + (num_rows_per * proc) + (VERT_BLOCK_SIZE * (vert_blocks_per - 1)), VERT_BLOCK_SIZE * kJ, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
     }
