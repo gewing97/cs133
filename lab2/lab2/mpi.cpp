@@ -7,7 +7,7 @@
 #include "../lab1/gemm.h"
 
 // Using declarations, if any...
-#define VERT_BLOCK_SIZE 64
+#define VERT_BLOCK_SIZE 128
 #define HORZ_BLOCK_SIZE 32
 
 
