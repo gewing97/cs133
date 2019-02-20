@@ -42,9 +42,9 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
             MPI_Isend(b, HORZ_BLOCK_SIZE * kJ, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &b_requests[i-1]);
             MPI_Isend(a + (num_rows_per * i), VERT_BLOCK_SIZE * kK, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &a_requests[i-1]);
         }
-	    for (int i = 0; i < num_rows_per; ++i) {
-            std::memset(c[offset + i], 0, sizeof(float) * kJ);
-        }
+	    // for (int i = 0; i < num_rows_per; ++i) {
+     //        std::memset(c[offset + i], 0, sizeof(float) * kJ);
+     //    }
     }
     else if(mpi_rank != 0){
         a_requests = new MPI_Request;
