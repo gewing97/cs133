@@ -71,7 +71,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
                     MPI_Wait(c_requests, MPI_STATUS_IGNORE);
                     c_requests = new MPI_Request;
                 }
-                printf("setup send: %d\n", vertical - VERT_BLOCK_SIZE)
+                printf("setup send: %d\n", vertical - VERT_BLOCK_SIZE);
                 MPI_Isend(c + vertical - VERT_BLOCK_SIZE, VERT_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, c_requests);
             }
             //request next portion of a
