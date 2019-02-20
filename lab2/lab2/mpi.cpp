@@ -139,6 +139,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
 
     if(mpi_rank == 0 && mpi_size > 1){
         for(int proc = 1; proc < mpi_size; proc++){
+            printf("setup send %d\n", (num_rows_per * proc) + (VERT_BLOCK_SIZE * (vert_blocks_per - 1)));
             MPI_Recv(c + (num_rows_per * proc) + (VERT_BLOCK_SIZE * (vert_blocks_per - 1)), VERT_BLOCK_SIZE * kJ, MPI_FLOAT, proc, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
     }
