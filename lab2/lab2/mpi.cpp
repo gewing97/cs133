@@ -67,7 +67,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
             MPI_Wait(a_requests, MPI_STATUS_IGNORE);
             //send processed portion of c
             if(vertical > offset){
-                if(request_num_v > 1){
+                if(vertical > offset + VERT_BLOCK_SIZE){
                     MPI_Wait(c_requests, MPI_STATUS_IGNORE);
                     c_requests = new MPI_Request;
                 }
@@ -83,7 +83,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
             MPI_Waitall(mpi_size-1, a_requests, MPI_STATUSES_IGNORE);
             a_requests = new MPI_Request[mpi_size-1];
             //receive c
-            if(request_num_v > 1){
+            if(vertical > offset + VERT_BLOCK_SIZE){
                 MPI_Waitall(mpi_size-1, c_requests, MPI_STATUSES_IGNORE);
                 c_requests = new MPI_Request[mpi_size-1];
             }
