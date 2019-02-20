@@ -143,6 +143,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
         }
     }
     else if(mpi_rank != 0){
+        printf("setup send %d\n", (num_rows_per * mpi_rank) + (VERT_BLOCK_SIZE * (vert_blocks_per - 1)))
         MPI_Send(c + (num_rows_per * mpi_rank) + (VERT_BLOCK_SIZE * (vert_blocks_per - 1)), VERT_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD);
         printf("send me daddy %d\n", mpi_rank);
     }  
