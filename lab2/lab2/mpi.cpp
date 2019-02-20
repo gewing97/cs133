@@ -109,7 +109,7 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
                         MPI_Irecv(b_portion + horz_limit, HORZ_BLOCK_SIZE * kJ, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, b_requests);
                     }
                 } else if (mpi_size > 1){
-                    printf("b_requests: %12X\n", a_requests, c_requests);
+                    printf("b_requests: %12X\n", b_requests);
                     MPI_Waitall(mpi_size - 1, b_requests, MPI_STATUSES_IGNORE);
                     if(horz_limit + HORZ_BLOCK_SIZE < kK){
                         b_requests = new MPI_Request[mpi_size-1];
