@@ -29,6 +29,10 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
     MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 
+    //incase rows per process goes to 0, decrease the number of processors
+    //should improve performance since less overhead for such a small problem size
+    while(mpi_size != 1 && kI/(mpi_size * VERT_BLOCK_SIZE) == 0) mpi_size = mpi_size/2;
+
     int num_rows_per = kI/mpi_size;
     int offset = mpi_rank * num_rows_per;
     int vert_blocks_per = num_rows_per / VERT_BLOCK_SIZE;
@@ -42,9 +46,9 @@ void GemmParallelBlocked(const float a[kI][kK], const float b[kK][kJ],
             MPI_Isend(b, HORZ_BLOCK_SIZE * kJ, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &b_requests[i-1]);
             MPI_Isend(a + (num_rows_per * i), VERT_BLOCK_SIZE * kK, MPI_FLOAT, i, 0, MPI_COMM_WORLD, &a_requests[i-1]);
         }
-	    // for (int i = 0; i < num_rows_per; ++i) {
-     //        std::memset(c[offset + i], 0, sizeof(float) * kJ);
-     //    }
+	    for (int i = 0; i < num_rows_per; ++i) {
+            std::memset(c[offset + i], 0, sizeof(float) * kJ);
+        }
     }
     else if(mpi_rank != 0){
         a_requests = new MPI_Request;
