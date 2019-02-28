@@ -23,7 +23,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
         for (int w = 0; w < kImSize; ++w) {
           for (int p = 0; p < kKernel; ++p) {
             for (int q = 0; q < kKernel; ++q)
-              C[i][h][w] += weight[(i * kNum) + (j * kKernel) + (p *kKernel) +q] * input[(j*kInImSize) ((h + p) * kInImSize) + w + q];
+              C[i][h][w] += weight[(i * kNum) + (j * kKernel) + (p *kKernel) +q] * input[(j*kInImSize) + ((h + p) * kInImSize) + w + q];
           }
         }
       }
