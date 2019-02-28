@@ -16,7 +16,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
         C[i][h][w] = bias[i];
     }
   }
-  printf("input: %s", input);
+  printf("input: %d", get_global_id(0););
 
   // // Convolution
   // for (int i = 0; i < kNum; ++i) {
