@@ -13,6 +13,6 @@ void CnnKernel(__global const float* input, __global const float* weight,
     output[i] = *bias;
   printf("input %d\n", input[0]);
   printf("weight %d\n", weight[0]);
-  printf("bias %d\n", *bias);
+  printf("bias %d\n", bias);
   printf("output %d\n", output[0]);
 }
