@@ -24,8 +24,6 @@ void CnnKernel(__global const float* input, __global const float* weight,
   int x_position = (pixel_x * 2) * kInImSize;
   int y_position = (pixel_y * 2);
   for (int j = 0; j < kNum; ++j) {
-    weight_layer_position += kKernel * kKernel;
-    x_position += input_layer_size;
     for (int p = 0; p < kKernel; ++p) {
       for (int q = 0; q < kKernel; ++q) {
         res00 += weight[weight_layer_position + (p * kKernel) + q] *
@@ -38,6 +36,8 @@ void CnnKernel(__global const float* input, __global const float* weight,
                     input[x_position + (1 + p) * kInImSize + y_position + 1 + q];
       }
     }
+    weight_layer_position += kKernel * kKernel;
+    x_position += input_layer_size;
   }
   //avoid function calls
   float max_val = (res00 > res01 ? res00 : res01) > (res10 > res11 ? res10 : res11) ? (res00 > res01 ? res00 : res01) : (res10 > res11 ? res10 : res11);
