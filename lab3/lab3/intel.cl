@@ -26,16 +26,18 @@ void CnnKernel(__global const float* input, __global const float* weight,
   int weight_layer_size = kNum * kKernel * kKernel;
   int input_layer_size = kInImSize*kInImSize;
   for (int j = 0; j < kNum; ++j) {
-    for (int h = 0; h < 2; ++h) {
+    // for (int h = 0; h < 2; ++h) {
       for (int w = 0; w < 2; ++w) {
         for (int p = 0; p < kKernel; ++p) {
           for (int q = 0; q < kKernel; ++q) {
-            C[h][w] += weight[(layer * weight_layer_size) + (j * kKernel * kKernel) + (p * kKernel) + q] *
-                        input[(j * input_layer_size) + (((pixel_x * 2) + h + p) * kInImSize) + ((pixel_y * 2) + w + q)];
+            C[0][w] += weight[(layer * weight_layer_size) + (j * kKernel * kKernel) + (p * kKernel) + q] *
+                        input[(j * input_layer_size) + (((pixel_x * 2) + 0 + p) * kInImSize) + ((pixel_y * 2) + w + q)];
+            C[1][w] += weight[(layer * weight_layer_size) + (j * kKernel * kKernel) + (p * kKernel) + q] *
+                        input[(j * input_layer_size) + (((pixel_x * 2) + 1 + p) * kInImSize) + ((pixel_y * 2) + w + q)];
           }
         }
       }
-    }
+    // }
   }
 
   // ReLU
