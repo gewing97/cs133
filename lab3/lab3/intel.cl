@@ -25,16 +25,51 @@ void CnnKernel(__global const float* input, __global const float* weight,
   int y_position = (pixel_y * 2);
   for (int j = 0; j < kNum; ++j) {
     for (int p = 0; p < kKernel; ++p) {
-      for (int q = 0; q < kKernel; ++q) {
-        res00 += weight[weight_layer_position + (p * kKernel) + q] *
-                    input[x_position + p * kInImSize + y_position + q];
-        res10 += weight[weight_layer_position + (p * kKernel) + q] *
-                    input[x_position + (1 + p) * kInImSize + y_position + q];
-        res01 += weight[weight_layer_position + (p * kKernel) + q] *
-                    input[x_position + p * kInImSize + y_position + 1 + q];
-        res11 += weight[weight_layer_position + (p * kKernel) + q] *
-                    input[x_position + (1 + p) * kInImSize + y_position + 1 + q];
-      }
+      // for (int q = 0; q < kKernel; ++q) {
+        res00 += weight[weight_layer_position + (p * kKernel) + 0] *
+                    input[x_position + p * kInImSize + y_position + 0] +
+                  weight[weight_layer_position + (p * kKernel) + 1] *
+                    input[x_position + p * kInImSize + y_position + 1] +
+                  weight[weight_layer_position + (p * kKernel) + 2] *
+                    input[x_position + p * kInImSize + y_position + 2] +
+                    weight[weight_layer_position + (p * kKernel) + 3] *
+                    input[x_position + p * kInImSize + y_position + 3]+ 
+                    weight[weight_layer_position + (p * kKernel) + 4] *
+                    input[x_position + p * kInImSize + y_position + 4];
+
+        res10 += weight[weight_layer_position + (p * kKernel) + 0] *
+                    input[x_position + (1 + p) * kInImSize + y_position + 0]+
+                    weight[weight_layer_position + (p * kKernel) + 1] *
+                    input[x_position + (1 + p) * kInImSize + y_position + 1]+
+                    weight[weight_layer_position + (p * kKernel) + 2] *
+                    input[x_position + (1 + p) * kInImSize + y_position + 2]+
+                    weight[weight_layer_position + (p * kKernel) + 3] *
+                    input[x_position + (1 + p) * kInImSize + y_position + 3]+
+                    weight[weight_layer_position + (p * kKernel) + 4] *
+                    input[x_position + (1 + p) * kInImSize + y_position + 4];
+
+        res01 += weight[weight_layer_position + (p * kKernel) + 0] *
+                    input[x_position + p * kInImSize + y_position + 1 + 0]+
+                  weight[weight_layer_position + (p * kKernel) + 1] *
+                    input[x_position + p * kInImSize + y_position + 1 + 1]+
+                  weight[weight_layer_position + (p * kKernel) + 2] *
+                    input[x_position + p * kInImSize + y_position + 1 + 2]+
+                  weight[weight_layer_position + (p * kKernel) + 3] *
+                    input[x_position + p * kInImSize + y_position + 1 + 3]+
+                    weight[weight_layer_position + (p * kKernel) + 4] *
+                    input[x_position + p * kInImSize + y_position + 1 + 4];
+
+        res11 += weight[weight_layer_position + (p * kKernel) + 0] *
+                    input[x_position + (1 + p) * kInImSize + y_position + 1 + 0] +
+                    weight[weight_layer_position + (p * kKernel) + 1] *
+                    input[x_position + (1 + p) * kInImSize + y_position + 1 + 1]+
+                    weight[weight_layer_position + (p * kKernel) + 2] *
+                    input[x_position + (1 + p) * kInImSize + y_position + 1 + 2]+
+                    weight[weight_layer_position + (p * kKernel) + 3] *
+                    input[x_position + (1 + p) * kInImSize + y_position + 1 + 3]+
+                    weight[weight_layer_position + (p * kKernel) + 4] *
+                    input[x_position + (1 + p) * kInImSize + y_position + 1 + 4];
+      // }
     }
     weight_layer_position += kKernel * kKernel;
     x_position += input_layer_size;
