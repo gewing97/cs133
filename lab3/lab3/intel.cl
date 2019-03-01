@@ -29,8 +29,6 @@ void CnnKernel(__global const float* input, __global const float* weight,
   //   for(int i = layer; i < layer + num_layers; i++){
   //     for(int w = pixel_x; w < pixel_x + x_pixels; w++){
   //       for(int h = pixel_y; h < pixel_y + y_pixels; h++){
-  //           // printf("indices %d %d %d\b", i, w, h);
-
   //           float res00_00, res01_00, res10_00, res11_00;
   //           res00_00 = res01_00 = res10_00 = res11_00 = bias[i];
   //           // Convolution
