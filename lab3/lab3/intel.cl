@@ -9,9 +9,6 @@ void CnnKernel(__global const float* input, __global const float* weight,
                __global const float* bias, __global float* output) {
   // float C[2][2];
 
-  int layer = get_global_id(0);
-  int pixel_x = get_global_id(1) * 2;
-  int pixel_y = get_global_id(2) * 4;
 
   int layer_size = kOutImSize * kOutImSize;
 
@@ -22,6 +19,9 @@ void CnnKernel(__global const float* input, __global const float* weight,
     
   // most optimized version of my code has these porportions
   if(num_layers == 1 && x_pixels == 2 && y_pixels == 4){
+    int layer = get_global_id(0);
+    int pixel_x = get_global_id(1) * 2;
+    int pixel_y = get_global_id(2) * 4;
     float res00_00, res01_00, res10_00, res11_00;
     res00_00 = res01_00 = res10_00 = res11_00 = bias[layer];
 
@@ -163,12 +163,16 @@ void CnnKernel(__global const float* input, __global const float* weight,
     output[(layer * layer_size) + ((pixel_x + 1) * kOutImSize) + pixel_y + 3] = max_val_13 > 0 ? max_val_13 : 0;
   }
   else{ //less efficient code so that this program is scalable
-    for(int i = layer * num_layers; i < (num_layers * (layer + 1)); i++){
-      for(int w = pixel_x * x_pixels; w < (x_pixels * (pixel_x + 1)); w++){
-        for(int h = pixel_y * y_pixels; h < (y_pixels * (pixel_y + 1)); h++){
+    int layer = get_global_id(0) * num_layers;
+    int pixel_x = get_global_id(1) * x_pixels;
+    int pixel_y = get_global_id(2) * y_pixels;
+    for(int i = layer; i < layer + num_layers); i++){
+      for(int w = pixel_x; w < pixel_x + x_pixels; w++){
+        for(int h = pixel_y; h < pixel_y + y_pixels; h++){
+            // printf("indices %d %d %d\b", i, w, h);
+
             float res00_00, res01_00, res10_00, res11_00;
             res00_00 = res01_00 = res10_00 = res11_00 = bias[i];
-            printf("indices %d %d %d\b", i, w, h);
             // Convolution
             int weight_layer_position = i * kNum * kKernel * kKernel;
             int input_layer_size = kInImSize*kInImSize;
