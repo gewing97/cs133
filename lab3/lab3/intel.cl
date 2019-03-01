@@ -25,13 +25,13 @@ void CnnKernel(__global const float* input, __global const float* weight,
     for (int p = 0; p < kKernel; ++p) {
       for (int q = 0; q < kKernel; ++q) {
         res00 += weight[(layer * weight_layer_size) + (j * kKernel * kKernel) + (p * kKernel) + q] *
-                    input[(j * input_layer_size) + (((pixel_x << 2) + 0 + p) * kInImSize) + ((pixel_y << 2) + 0 + q)];
+                    input[(j * input_layer_size) + (((pixel_x << 1) + 0 + p) * kInImSize) + ((pixel_y << 1) + 0 + q)];
         res10 += weight[(layer * weight_layer_size) + (j * kKernel * kKernel) + (p * kKernel) + q] *
-                    input[(j * input_layer_size) + (((pixel_x << 2) + 1 + p) * kInImSize) + ((pixel_y << 2) + 0 + q)];
+                    input[(j * input_layer_size) + (((pixel_x << 1) + 1 + p) * kInImSize) + ((pixel_y << 1) + 0 + q)];
         res01 += weight[(layer * weight_layer_size) + (j * kKernel * kKernel) + (p * kKernel) + q] *
-                    input[(j * input_layer_size) + (((pixel_x << 2) + 0 + p) * kInImSize) + ((pixel_y << 2) + 1 + q)];
+                    input[(j * input_layer_size) + (((pixel_x << 1) + 0 + p) * kInImSize) + ((pixel_y << 1) + 1 + q)];
         res11 += weight[(layer * weight_layer_size) + (j * kKernel * kKernel) + (p * kKernel) + q] *
-                    input[(j * input_layer_size) + (((pixel_x << 2) + 1 + p) * kInImSize) + ((pixel_y << 2) + 1 + q)];
+                    input[(j * input_layer_size) + (((pixel_x << 1) + 1 + p) * kInImSize) + ((pixel_y << 1) + 1 + q)];
       }
     }
   }
