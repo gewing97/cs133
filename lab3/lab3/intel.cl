@@ -19,19 +19,22 @@ void CnnKernel(__global const float* input, __global const float* weight,
   res00 = res01 = res10 = res11 = bias[layer];
 
   // Convolution
-  int weight_layer_size = kNum * kKernel * kKernel;
+  int weight_layer_position = lay * kNum * kKernel * kKernel;
   int input_layer_size = kInImSize*kInImSize;
   for (int j = 0; j < kNum; ++j) {
+    int input_layer_position = (j * input_layer_size);
     for (int p = 0; p < kKernel; ++p) {
+      int x_position = (pixel_x * 2) * kInImSize;
       for (int q = 0; q < kKernel; ++q) {
-        res00 += weight[(layer * weight_layer_size) + (j * kKernel * kKernel) + (p * kKernel) + q] *
-                    input[(j * input_layer_size) + (((pixel_x << 1) + 0 + p) * kInImSize) + ((pixel_y << 1) + 0 + q)];
-        res10 += weight[(layer * weight_layer_size) + (j * kKernel * kKernel) + (p * kKernel) + q] *
-                    input[(j * input_layer_size) + (((pixel_x << 1) + 1 + p) * kInImSize) + ((pixel_y << 1) + 0 + q)];
-        res01 += weight[(layer * weight_layer_size) + (j * kKernel * kKernel) + (p * kKernel) + q] *
-                    input[(j * input_layer_size) + (((pixel_x << 1) + 0 + p) * kInImSize) + ((pixel_y << 1) + 1 + q)];
-        res11 += weight[(layer * weight_layer_size) + (j * kKernel * kKernel) + (p * kKernel) + q] *
-                    input[(j * input_layer_size) + (((pixel_x << 1) + 1 + p) * kInImSize) + ((pixel_y << 1) + 1 + q)];
+        int y_position = (pixel_y * 2)
+        res00 += weight[weight_layer_position + (j * kKernel * kKernel) + (p * kKernel) + q] *
+                    input[input_layer_position + x_position + p * kInImSize + y_position + q];
+        res10 += weight[weight_layer_position + (j * kKernel * kKernel) + (p * kKernel) + q] *
+                    input[input_layer_position + x_position + (1 + p) * kInImSize + y_position + q];
+        res01 += weight[weight_layer_position + (j * kKernel * kKernel) + (p * kKernel) + q] *
+                    input[input_layer_position + x_position + p * kInImSize + y_position + 1 + q];
+        res11 += weight[weight_layer_position + (j * kKernel * kKernel) + (p * kKernel) + q] *
+                    input[input_layer_position + x_position + (1 + p) * kInImSize + y_position + 1 + q];
       }
     }
   }
