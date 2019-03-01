@@ -72,7 +72,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
   int y_position_1 = ((pixel_y + 1) * 2);
   int y_position_2 = ((pixel_y + 2) * 2); 
   int y_position_3 = ((pixel_y + 3) * 2); 
-  int y_position_4 = (pixel_y * 4);
+  int y_position_4 = ((pixel_y + 4) * 2);
   int y_position_5 = ((pixel_y + 5) * 2);
   int y_position_6 = ((pixel_y + 6) * 2); 
   int y_position_7 = ((pixel_y + 7) * 2);   
