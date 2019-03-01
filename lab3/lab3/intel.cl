@@ -10,6 +10,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
   float C[2][2];
 
   int gid = get_global_id(0);
+  printf("global %d\n", gid);
   int layer_size = kOutImSize * kOutImSize;
   int layer = gid / layer_size;
   int pixel_x = (gid % layer_size) / kOutImSize;
@@ -27,13 +28,8 @@ void CnnKernel(__global const float* input, __global const float* weight,
       for (int w = 0; w < 2; ++w) {
         for (int p = 0; p < kKernel; ++p) {
           for (int q = 0; q < kKernel; ++q) {
-            printf(
-              "weight at %f\n input at %f\n",
-              weight[(layer * weight_layer_size) + (j * kKernel * kKernel) + (p * kKernel) + q],
-              input[(j * input_layer_size) + (((pixel_x * 2) + h + p) * kInImSize) + ((pixel_y * 2) + w + q)]
-            );
             C[h][w] += weight[(layer * weight_layer_size) + (j * kKernel * kKernel) + (p * kKernel) + q] *
-                        input[(j * input_layer_size) + ((pixel_x * 2) + h + p) * kInImSize + ((pixel_y * 2) + w + q)];
+                        input[(j * input_layer_size) + (((pixel_x * 2) + h + p) * kInImSize) + ((pixel_y * 2) + w + q)];
           }
         }
       }
@@ -54,6 +50,6 @@ void CnnKernel(__global const float* input, __global const float* weight,
   output[(layer * layer_size) + (pixel_x * kOutImSize) + pixel_y] = max(
     max(C[0][0], C[1][0]),
     max(C[0][1], C[1][1]));
-  printf("bias %f\n", bias[layer]);
-  printf("output %f at %d\n", output[(layer * layer_size) + (pixel_x * kOutImSize) + pixel_y], (layer * layer_size) + (pixel_x * kOutImSize) + pixel_y);
+  // printf("bias %f\n", bias[layer]);
+  // printf("output %f at %d\n", output[(layer * layer_size) + (pixel_x * kOutImSize) + pixel_y], (layer * layer_size) + (pixel_x * kOutImSize) + pixel_y);
 }
