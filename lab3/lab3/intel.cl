@@ -63,8 +63,8 @@ void CnnKernel(__global const float* input, __global const float* weight,
   //   max(C[0][1], C[1][1]));
 
   //avoid function calls
-  float max_val = (res00 > res01 ? res00 : res01) > (res10 > res11 ? res10 : res11) ? (res00 > res01 ? res00 : res01) : (res10 > res11 ? res10 : res11)
-  output[(layer * layer_size) + (pixel_x * kOutImSize) + pixel_y] = max_val > 0 ? max_val : 0
+  float max_val = (res00 > res01 ? res00 : res01) > (res10 > res11 ? res10 : res11) ? (res00 > res01 ? res00 : res01) : (res10 > res11 ? res10 : res11);
+  output[(layer * layer_size) + (pixel_x * kOutImSize) + pixel_y] = max_val > 0 ? max_val : 0;
   // printf("bias %f\n", bias[layer]);
   // printf("output %f at %d\n", output[(layer * layer_size) + (pixel_x * kOutImSize) + pixel_y], (layer * layer_size) + (pixel_x * kOutImSize) + pixel_y);
 }
