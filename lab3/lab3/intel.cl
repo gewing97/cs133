@@ -26,9 +26,15 @@ void CnnKernel(__global const float* input, __global const float* weight,
     for (int h = 0; h < 2; ++h) {
       for (int w = 0; w < 2; ++w) {
         for (int p = 0; p < kKernel; ++p) {
-          for (int q = 0; q < kKernel; ++q)
+          for (int q = 0; q < kKernel; ++q) {
+            printf(
+              "weight at %d\n input at %d\n",
+              (layer * weight_layer_size) + (j * kKernel * kKernel) + (p * kKernel) + q,
+              (j * input_layer_size) + ((pixel_x * 2) + h + p) * kInImSize + ((pixel_y * 2) + w + q)
+            );
             C[h][w] += weight[(layer * weight_layer_size) + (j * kKernel * kKernel) + (p * kKernel) + q] *
                         input[(j * input_layer_size) + ((pixel_x * 2) + h + p) * kInImSize + ((pixel_y * 2) + w + q)];
+          }
         }
       }
     }
