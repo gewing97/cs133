@@ -22,7 +22,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
   int weight_layer_position = layer * kNum * kKernel * kKernel;
   int input_layer_size = kInImSize*kInImSize;
   int x_position = (pixel_x * 2) * kInImSize;
-  int y_position = (pixel_y * 2)
+  int y_position = (pixel_y * 2);
   for (int j = 0; j < kNum; ++j) {
     weight_layer_position += (j * kKernel * kKernel);
     x_position += input_layer_size;
