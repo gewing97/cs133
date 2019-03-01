@@ -39,7 +39,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
   // ReLU
   for (int h = 0; h < 2; ++h) {
     for (int w = 0; w < 2; ++w) {
-      printf("value of c %f\n", C[h][w]);
+      // printf("value of c %f\n", C[h][w]);
       C[h][w] = max(0.f, C[h][w]);
     }
   }
