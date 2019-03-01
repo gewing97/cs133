@@ -166,7 +166,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
     int layer = get_global_id(0) * num_layers;
     int pixel_x = get_global_id(1) * x_pixels;
     int pixel_y = get_global_id(2) * y_pixels;
-    for(int i = layer; i < layer + num_layers); i++){
+    for(int i = layer; i < layer + num_layers; i++){
       for(int w = pixel_x; w < pixel_x + x_pixels; w++){
         for(int h = pixel_y; h < pixel_y + y_pixels; h++){
             // printf("indices %d %d %d\b", i, w, h);
