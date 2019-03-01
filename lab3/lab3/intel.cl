@@ -47,5 +47,5 @@ void CnnKernel(__global const float* input, __global const float* weight,
   output[(layer * layer_size) + (pixel_x * kOutImSize) + pixel_y] = max(
     max(C[0][0], C[1][0]),
     max(C[0][1], C[1][1]));
-  printf("output %f at %d", output[(layer * layer_size) + (pixel_x * kOutImSize) + pixel_y], (layer * layer_size) + (pixel_x * kOutImSize) + pixel_y);
+  printf("output %f at %d\n", output[(layer * layer_size) + (pixel_x * kOutImSize) + pixel_y], (layer * layer_size) + (pixel_x * kOutImSize) + pixel_y);
 }
