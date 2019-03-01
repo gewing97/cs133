@@ -9,12 +9,14 @@ void CnnKernel(__global const float* input, __global const float* weight,
                __global const float* bias, __global float* output) {
   float C[2][2];
 
-  int gid = get_global_id(0);
-  printf("global %d\n", gid);
+  int layer = get_global_id(0);
+  int pixel_x = get_global_id(1);
+  int pixel_y = get_global_id(2);
+
   int layer_size = kOutImSize * kOutImSize;
-  int layer = gid / layer_size;
-  int pixel_x = (gid % layer_size) / kOutImSize;
-  int pixel_y = gid % kOutImSize;
+  // int layer = gid / layer_size;
+  // int pixel_x = (gid % layer_size) / kOutImSize;
+  // int pixel_y = gid % kOutImSize;
   for (int h = 0; h < 2; ++h) {
     for (int w = 0; w < 2; ++w)
       C[h][w] = bias[layer]; //which value of the bias do we want? based on gid
