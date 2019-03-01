@@ -9,9 +9,9 @@ void CnnKernel(__global const float* input, __global const float* weight,
                __global const float* bias, __global float* output) {
   // float C[2][2];
 
-  int layer = get_global_id(0) * 2;
+  int layer = get_global_id(0);
   int pixel_x = get_global_id(1) * 2;
-  int pixel_y = get_global_id(2) * 2;
+  int pixel_y = get_global_id(2);
 
   int layer_size = kOutImSize * kOutImSize;
 
@@ -42,13 +42,13 @@ void CnnKernel(__global const float* input, __global const float* weight,
                     input[x_position_1 + (1 + p) * kInImSize + y_position_1 + 1 + q];
 
         res00_2 += curr_weight *
-                    input[x_position_2 + p * kInImSize + y_position_2 + q];
+                    input[x_position_2 + p * kInImSize + y_position_1 + q];
         res10_2 += curr_weight *
-                    input[x_position_2 + (1 + p) * kInImSize + y_position_2 + q];
+                    input[x_position_2 + (1 + p) * kInImSize + y_position_1 + q];
         res01_2 += curr_weight *
-                    input[x_position_2 + p * kInImSize + y_position_2 + 1 + q];
+                    input[x_position_2 + p * kInImSize + y_position_1 + 1 + q];
         res11_2 += curr_weight *
-                    input[x_position_2 + (1 + p) * kInImSize + y_position_2 + 1 + q];
+                    input[x_position_2 + (1 + p) * kInImSize + y_position_1 + 1 + q];
       }
     }
     weight_layer_position += kKernel * kKernel;
@@ -60,6 +60,6 @@ void CnnKernel(__global const float* input, __global const float* weight,
   output[(layer * layer_size) + (pixel_x * kOutImSize) + pixel_y] = max_val_1 > 0 ? max_val_1 : 0;
 
   float max_val_2 = (res00_2 > res01_2 ? res00_2 : res01_2) > (res10_2 > res11_2 ? res10_2 : res11_2) ? (res00_2 > res01_2 ? res00_2 : res01_2) : (res10_2 > res11_2 ? res10_2 : res11_2);
-  output[(layer * layer_size) + ((pixel_x + 1) * kOutImSize) + pixel_y + 1] = max_val_2 > 0 ? max_val_2 : 0;
+  output[(layer * layer_size) + ((pixel_x + 1) * kOutImSize) + pixel_y] = max_val_2 > 0 ? max_val_2 : 0;
 
 }
