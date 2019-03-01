@@ -167,7 +167,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
       for(int w = pixel_x * x_pixels; w < (x_pixels * (pixel_x + 1)); w++){
         for(int h = pixel_y * y_pixels; h < (y_pixels * (pixel_y + 1)); h++){
             float res00_00, res01_00, res10_00, res11_00;
-            res00_00 = res01_00 = res10_00 = res11_00 = bias[layer];
+            res00_00 = res01_00 = res10_00 = res11_00 = bias[i];
 
             // Convolution
             int weight_layer_position = i * kNum * kKernel * kKernel;
