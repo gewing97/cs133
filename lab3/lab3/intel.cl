@@ -7,57 +7,68 @@ __constant int kOutImSize = 112;
 __kernel
 void CnnKernel(__global const float* input, __global const float* weight,
                __global const float* bias, __global float* output) {
-  // float C[2][2];
-
 
   int layer_size = kOutImSize * kOutImSize;
 
-  int num_layers = kNum / get_global_size(0);
-  int x_pixels = kOutImSize / get_global_size(1);
-  int y_pixels = kOutImSize / get_global_size(2);
+  //// //////////////////////////////////////////////////////////////
+  //// Commented code is made to be flexible to varying parameters
+  //// However it is definitively slower than the optimized code that follows it
+  //// Commented code was used simply to understand the scalability of the approach I used
+  //// and record data for the report. Can uncomment if desire, will not break program.
+  //////////////////////////////////////////////////////////////////
 
-  if(((num_layers ^ 1) | (x_pixels ^ 2) | (y_pixels ^ 4))){
-    int layer = get_global_id(0) * num_layers;
-    int pixel_x = get_global_id(1) * x_pixels;
-    int pixel_y = get_global_id(2) * y_pixels;
-    for(int i = layer; i < layer + num_layers; i++){
-      for(int w = pixel_x; w < pixel_x + x_pixels; w++){
-        for(int h = pixel_y; h < pixel_y + y_pixels; h++){
-            // printf("indices %d %d %d\b", i, w, h);
+  // and record scalability data for the report 
+  // int num_layers = kNum / get_global_size(0);
+  // int x_pixels = kOutImSize / get_global_size(1);
+  // int y_pixels = kOutImSize / get_global_size(2);
 
-            float res00_00, res01_00, res10_00, res11_00;
-            res00_00 = res01_00 = res10_00 = res11_00 = bias[i];
-            // Convolution
-            int weight_layer_position = i * kNum * kKernel * kKernel;
-            int input_layer_size = kInImSize*kInImSize;
-            int x_position_0 = (w * 2) * kInImSize;
-            int y_position_0 = (h * 2);
-            for (int j = 0; j < kNum; ++j) {
-              for (int p = 0; p < kKernel; ++p) {
-                for (int q = 0; q < kKernel; ++q) {
-                  float curr_weight =  weight[weight_layer_position + (p * kKernel) + q];
-                  res00_00 += curr_weight *
-                              input[x_position_0 + p * kInImSize + y_position_0 + q];
-                  res10_00 += curr_weight *
-                              input[x_position_0 + (1 + p) * kInImSize + y_position_0 + q];
-                  res01_00 += curr_weight *
-                              input[x_position_0 + p * kInImSize + y_position_0 + 1 + q];
-                  res11_00 += weight[weight_layer_position + (p * kKernel) + q] *
-                              input[x_position_0 + (1 + p) * kInImSize + y_position_0 + 1 + q];
-                }
-              }
-              weight_layer_position += kKernel * kKernel;
-              x_position_0 += input_layer_size;
-            }
-            //avoid function calls
-            float max_val_00 = (res00_00 > res01_00 ? res00_00 : res01_00) > (res10_00 > res11_00 ? res10_00 : res11_00) ? (res00_00 > res01_00 ? res00_00 : res01_00) : (res10_00 > res11_00 ? res10_00 : res11_00);
-            output[(i * layer_size) + (w * kOutImSize) + h] = max_val_00 > 0 ? max_val_00 : 0;
-        }
-      }
-    }
-    return;
-  }
-  // most optimized version of my code
+  // if(((num_layers ^ 1) | (x_pixels ^ 2) | (y_pixels ^ 4))){
+  //   int layer = get_global_id(0) * num_layers;
+  //   int pixel_x = get_global_id(1) * x_pixels;
+  //   int pixel_y = get_global_id(2) * y_pixels;
+  //   for(int i = layer; i < layer + num_layers; i++){
+  //     for(int w = pixel_x; w < pixel_x + x_pixels; w++){
+  //       for(int h = pixel_y; h < pixel_y + y_pixels; h++){
+  //           // printf("indices %d %d %d\b", i, w, h);
+
+  //           float res00_00, res01_00, res10_00, res11_00;
+  //           res00_00 = res01_00 = res10_00 = res11_00 = bias[i];
+  //           // Convolution
+  //           int weight_layer_position = i * kNum * kKernel * kKernel;
+  //           int input_layer_size = kInImSize*kInImSize;
+  //           int x_position_0 = (w * 2) * kInImSize;
+  //           int y_position_0 = (h * 2);
+  //           for (int j = 0; j < kNum; ++j) {
+  //             for (int p = 0; p < kKernel; ++p) {
+  //               for (int q = 0; q < kKernel; ++q) {
+  //                 float curr_weight =  weight[weight_layer_position + (p * kKernel) + q];
+  //                 res00_00 += curr_weight *
+  //                             input[x_position_0 + p * kInImSize + y_position_0 + q];
+  //                 res10_00 += curr_weight *
+  //                             input[x_position_0 + (1 + p) * kInImSize + y_position_0 + q];
+  //                 res01_00 += curr_weight *
+  //                             input[x_position_0 + p * kInImSize + y_position_0 + 1 + q];
+  //                 res11_00 += weight[weight_layer_position + (p * kKernel) + q] *
+  //                             input[x_position_0 + (1 + p) * kInImSize + y_position_0 + 1 + q];
+  //               }
+  //             }
+  //             weight_layer_position += kKernel * kKernel;
+  //             x_position_0 += input_layer_size;
+  //           }
+  //           //avoid function calls
+  //           float max_val_00 = (res00_00 > res01_00 ? res00_00 : res01_00) > (res10_00 > res11_00 ? res10_00 : res11_00) ? (res00_00 > res01_00 ? res00_00 : res01_00) : (res10_00 > res11_00 ? res10_00 : res11_00);
+  //           output[(i * layer_size) + (w * kOutImSize) + h] = max_val_00 > 0 ? max_val_00 : 0;
+  //       }
+  //     }
+  //   }
+  //   return;
+  // }
+
+
+  // the following is the most optimized version of my code
+  // with the global work (256 56 28) and local (64 1 14) it
+  // achieves the best performance I was capable of producing.
+
   int layer = get_global_id(0);
   int pixel_x = get_global_id(1) * 2;
   int pixel_y = get_global_id(2) * 4;
