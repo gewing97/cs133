@@ -61,8 +61,6 @@ void CnnKernel(__global const float* input, __global const float* weight,
   float res00_15, res01_15, res10_15, res11_15;
   res00_15 = res01_15 = res10_15 = res11_15 = bias[layer];
 
-
-
   // Convolution
   int weight_layer_position = layer * kNum * kKernel * kKernel;
   int input_layer_size = kInImSize*kInImSize;
