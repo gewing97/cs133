@@ -93,6 +93,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
   }          
   printf("%d %d %d %d %d %d\n", local_layer, local_x, local_y, layer, pixel_x, pixel_y);
 
+  return;
   for (int j = 0; j < kNum; ++j) {
     for (int p = 0; p < 5; ++p) {
       for (int q = 0; q < 5; ++q) {
