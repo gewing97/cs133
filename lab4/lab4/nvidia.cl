@@ -94,8 +94,8 @@ void CnnKernel(__global const float* input, __global const float* weight,
     }          
   }
   barrier(CLK_LOCAL_MEM_FENCE);
-  printf("%d %d\n", layer, local_weight[0][0][0]);
-  
+  printf("%d %d\n", local_layer, local_weight[0][0][0]);
+
   for (int j = 0; j < kNum; ++j) {
     for (int p = 0; p < 5; ++p) {
       for (int q = 0; q < 5; ++q) {
