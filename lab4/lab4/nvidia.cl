@@ -77,13 +77,12 @@ void CnnKernel(__global const float* input, __global const float* weight,
   int y_position_7 = ((pixel_y + 7) * 2);   
 
   __local local_weight[256][5][5];
-  barrier(CLK_LOCAL_MEM_FENCE);
   for (int j = 0; j < kNum; ++j) {
     for (int p = 0; p < 5; ++p) {
       for (int q = 0; q < 5; ++q) {
+        barrier(CLK_LOCAL_MEM_FENCE);
         local_weight[j][p][q] = weight[weight_layer_position + (p * kKernel) + q];
         barrier(CLK_LOCAL_MEM_FENCE);
-
       }
     }
     weight_layer_position += 25;
