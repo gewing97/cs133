@@ -7,9 +7,13 @@ __constant int kOutImSize = 112;
 __kernel
 void CnnKernel(__global const float* input, __global const float* weight,
                __global const float* bias, __global float* output) {
-  int layer = get_global_id(0);
+  int layer = get_global_id(0);  
   int pixel_x = get_global_id(1) * 2;
   int pixel_y = get_global_id(2) * 8;
+
+  int local_layer = get_local_id(0);
+  int local_x = get_local_id(1);
+  int local_y = get_local_id(2);
 
   int layer_size = kOutImSize * kOutImSize;
 
@@ -77,15 +81,18 @@ void CnnKernel(__global const float* input, __global const float* weight,
   int y_position_7 = ((pixel_y + 7) * 2);   
 
   __local local_weight[256][5][5];
-  for (int j = 0; j < kNum; ++j) {
-    for (int p = 0; p < 5; ++p) {
-      for (int q = 0; q < 5; ++q) {
-        barrier(CLK_LOCAL_MEM_FENCE);
-        local_weight[j][p][q] = weight[weight_layer_position + (p * kKernel) + q];
-        barrier(CLK_LOCAL_MEM_FENCE);
+
+  if(local_layer == 0){
+    barrier(CLK_LOCAL_MEM_FENCE);
+    for (int j = 0; j < kNum; ++j) {
+      for (int p = 0; p < 5; ++p) {
+        for (int q = 0; q < 5; ++q) {
+          local_weight[j][p][q] = weight[weight_layer_position + (p * kKernel) + q];
+        }
       }
-    }
-    weight_layer_position += 25;
+      weight_layer_position += 25;
+    }          
+    barrier(CLK_LOCAL_MEM_FENCE);
   }
 
   for (int j = 0; j < kNum; ++j) {
