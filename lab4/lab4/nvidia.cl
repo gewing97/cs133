@@ -80,29 +80,27 @@ void CnnKernel(__global const float* input, __global const float* weight,
   int y_position_6 = ((pixel_y + 6) * 2); 
   int y_position_7 = ((pixel_y + 7) * 2);   
 
-  __local local_weight[256][5][5];
+  __local local_input[256][8][20];
 
-  barrier(CLK_LOCAL_MEM_FENCE);
-  if(local_layer == 0){
-    for (int j = 0; j < kNum; ++j) {
-      for (int p = 0; p < 5; ++p) {
-        for (int q = 0; q < 5; ++q) {
-          local_weight[j][p][q] = weight[weight_layer_position + (p * kKernel) + q];
-        }
+  int num_layers_per = 256 / get_local_size(1);
+
+  for (int j = local_layer; j < kNum; j += num_layers_per) {
+    for (int p = 0; p < 8; ++p) {
+      for (int q = 0; q < 20; ++q) {
+        local_input[j][p][q] = input[x_position_0 + p * kInImSize + y_position_0 + q];
       }
-      weight_layer_position += 25;
-    }          
-  }
-  barrier(CLK_LOCAL_MEM_FENCE);
+    }
+  }          
   printf("%d %d %d %d %d %d %d\n", local_layer, local_x, local_y, layer, pixel_x, pixel_y, local_weight[0][0][1]);
 
   for (int j = 0; j < kNum; ++j) {
     for (int p = 0; p < 5; ++p) {
       for (int q = 0; q < 5; ++q) {
-        float curr_weight = local_weight[j][p][q];
+        float curr_weight = weight[weight_layer_position + (p * kKernel) + q];
         //first convolution
         res00_00 += curr_weight *
-                    input[x_position_0 + p * kInImSize + y_position_0 + q];
+                    local_input[j][p][q];
+                    //input[x_position_0 + p * kInImSize + y_position_0 + q];
         res10_00 += curr_weight *
                     input[x_position_0 + (1 + p) * kInImSize + y_position_0 + q];
         res01_00 += curr_weight *
