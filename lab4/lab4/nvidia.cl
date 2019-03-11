@@ -62,7 +62,6 @@ void CnnKernel(__global const float* input, __global const float* weight,
   res00_17 = res01_17 = res10_17 = res11_17 = bias[layer];
 
 
-
   // Convolution
   int weight_layer_position = layer * kNum * kKernel * kKernel;
   int input_layer_size = kInImSize*kInImSize;
@@ -77,13 +76,20 @@ void CnnKernel(__global const float* input, __global const float* weight,
   int y_position_6 = ((pixel_y + 6) * 2); 
   int y_position_7 = ((pixel_y + 7) * 2);   
 
-  // __local local_weight[25];
-  // for(int i = 0)
+  __local local_weight[6400];
+  for (int j = 0; j < kNum; ++j) {
+    for (int p = 0; p < 5; ++p) {
+      for (int q = 0; q < 5; ++q) {
+        local_weight[(j*25) + (p*5) + q] = weight[weight_layer_position + (p * kKernel) + q];
+      }
+    }
+    weight_layer_position += kKernel * kKernel;
+  }
 
   for (int j = 0; j < kNum; ++j) {
     for (int p = 0; p < 5; ++p) {
       for (int q = 0; q < 5; ++q) {
-        float curr_weight =  weight[weight_layer_position + (p * kKernel) + q];
+        float curr_weight =  local_weight[(j*25) + (p*5) + q];
         //first convolution
         res00_00 += curr_weight *
                     input[x_position_0 + p * kInImSize + y_position_0 + q];
@@ -233,7 +239,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
                     input[x_position_1 + (1 + p) * kInImSize + y_position_7 + 1 + q];
       }
     }
-    weight_layer_position += kKernel * kKernel;
+    // weight_layer_position += kKernel * kKernel;
     x_position_0 += input_layer_size;
     x_position_1 += input_layer_size;
   }
