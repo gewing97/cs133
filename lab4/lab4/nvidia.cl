@@ -80,11 +80,11 @@ void CnnKernel(__global const float* input, __global const float* weight,
   int y_position_6 = ((pixel_y + 6) * 2); 
   int y_position_7 = ((pixel_y + 7) * 2);   
 
-  __local local_input[256][8][20];
+  __local local_input[64][8][20];
 
   int num_layers_per = 256 / get_local_size(1);
 
-  for (int j = local_layer; j < kNum; j += num_layers_per) {
+  for (int j = local_layer; j < 64; j += num_layers_per) {
     for (int p = 0; p < 8; ++p) {
       for (int q = 0; q < 20; ++q) {
         local_input[j][p][q] = input[x_position_0 + p * kInImSize + y_position_0 + q];
