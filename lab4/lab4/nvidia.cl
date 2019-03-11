@@ -76,7 +76,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
   int y_position_6 = ((pixel_y + 6) * 2); 
   int y_position_7 = ((pixel_y + 7) * 2);   
 
-  __local local_weight[kNum][kKernel][kKernel];
+  __local local_weight[256][5][5];
   for (int j = 0; j < kNum; ++j) {
     for (int p = 0; p < 5; ++p) {
       for (int q = 0; q < 5; ++q) {
