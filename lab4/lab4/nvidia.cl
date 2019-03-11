@@ -7,7 +7,7 @@ __constant int kOutImSize = 112;
 __kernel
 void CnnKernel(__global const float* input, __global const float* weight,
                __global const float* bias, __global float* output) {
-    int layer = get_global_id(0);
+  int layer = get_global_id(0);
   int pixel_x = get_global_id(1) * 2;
   int pixel_y = get_global_id(2) * 8;
 
@@ -61,6 +61,8 @@ void CnnKernel(__global const float* input, __global const float* weight,
   float res00_17, res01_17, res10_17, res11_17;
   res00_17 = res01_17 = res10_17 = res11_17 = bias[layer];
 
+
+
   // Convolution
   int weight_layer_position = layer * kNum * kKernel * kKernel;
   int input_layer_size = kInImSize*kInImSize;
@@ -74,10 +76,15 @@ void CnnKernel(__global const float* input, __global const float* weight,
   int y_position_5 = ((pixel_y + 5) * 2);
   int y_position_6 = ((pixel_y + 6) * 2); 
   int y_position_7 = ((pixel_y + 7) * 2);   
+
+  // __local local_weight[25];
+  // for(int i = 0)
+
   for (int j = 0; j < kNum; ++j) {
-    for (int p = 0; p < kKernel; ++p) {
-      for (int q = 0; q < kKernel; ++q) {
+    for (int p = 0; p < 5; ++p) {
+      for (int q = 0; q < 5; ++q) {
         float curr_weight =  weight[weight_layer_position + (p * kKernel) + q];
+        //first convolution
         res00_00 += curr_weight *
                     input[x_position_0 + p * kInImSize + y_position_0 + q];
         res10_00 += curr_weight *
@@ -87,6 +94,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
         res11_00 += curr_weight *
                     input[x_position_0 + (1 + p) * kInImSize + y_position_0 + 1 + q];
 
+        //second convolution
         res00_01 += curr_weight *
                     input[x_position_0 + p * kInImSize + y_position_1 + q];
         res10_01 += curr_weight *
@@ -96,6 +104,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
         res11_01 += curr_weight *
                     input[x_position_0 + (1 + p) * kInImSize + y_position_1 + 1 + q];
 
+        //third convolution
         res00_10 += curr_weight *
                     input[x_position_1 + p * kInImSize + y_position_0 + q];
         res10_10 += curr_weight *
@@ -105,6 +114,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
         res11_10 += curr_weight *
                     input[x_position_1 + (1 + p) * kInImSize + y_position_0 + 1 + q];
 
+        //fourth convolution
         res00_11 += curr_weight *
                     input[x_position_1 + p * kInImSize + y_position_1 + q];
         res10_11 += curr_weight *
