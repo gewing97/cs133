@@ -8,8 +8,9 @@ __kernel
 void CnnKernel(__global const float* input, __global const float* weight,
                __global const float* bias, __global float* output) {
   int layer_size = kOutImSize * kOutImSize;
-
-
+  int num_layers = kNum / get_global_size(0);
+  int x_pixels = kOutImSize / get_global_size(1);
+  int y_pixels = kOutImSize / get_global_size(2);
   int layer = get_global_id(0) * num_layers;
   int pixel_x = get_global_id(1) * x_pixels;
   int pixel_y = get_global_id(2) * y_pixels;
