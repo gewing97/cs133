@@ -83,7 +83,6 @@ void CnnKernel(__global const float* input, __global const float* weight,
   __local local_weight[256][5][5];
 
   if(local_layer == 0){
-    barrier(CLK_LOCAL_MEM_FENCE);
     for (int j = 0; j < kNum; ++j) {
       for (int p = 0; p < 5; ++p) {
         for (int q = 0; q < 5; ++q) {
@@ -92,8 +91,9 @@ void CnnKernel(__global const float* input, __global const float* weight,
       }
       weight_layer_position += 25;
     }          
-    barrier(CLK_LOCAL_MEM_FENCE);
   }
+  barrier(CLK_LOCAL_MEM_FENCE);
+
 
   for (int j = 0; j < kNum; ++j) {
     for (int p = 0; p < 5; ++p) {
