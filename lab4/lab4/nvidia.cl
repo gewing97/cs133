@@ -76,20 +76,20 @@ void CnnKernel(__global const float* input, __global const float* weight,
   int y_position_6 = ((pixel_y + 6) * 2); 
   int y_position_7 = ((pixel_y + 7) * 2);   
 
-  __local local_weight[6400];
+  __local local_weight[kNum][kKernel][kKernel];
   for (int j = 0; j < kNum; ++j) {
     for (int p = 0; p < 5; ++p) {
       for (int q = 0; q < 5; ++q) {
-        local_weight[(j*25) + (p*5) + q] = weight[weight_layer_position + (p * kKernel) + q];
+        local_weight[j][p][q] = weight[weight_layer_position + (p * kKernel) + q];
       }
     }
-    weight_layer_position += kKernel * kKernel;
+    weight_layer_position += 25;
   }
 
   for (int j = 0; j < kNum; ++j) {
     for (int p = 0; p < 5; ++p) {
       for (int q = 0; q < 5; ++q) {
-        float curr_weight =  local_weight[(j*25) + (p*5) + q];
+        float curr_weight =  local_weight[j][p][q];
         //first convolution
         res00_00 += curr_weight *
                     input[x_position_0 + p * kInImSize + y_position_0 + q];
