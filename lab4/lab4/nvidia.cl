@@ -114,7 +114,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
                       // input[x_position_0 + p * kInImSize + y_position_0 + 1 + q];
           res11_00 += curr_weight *
                       local_input[j][p+1][q+1];
-                      input[x_position_0 + (1 + p) * kInImSize + y_position_0 + 1 + q];
+                      // input[x_position_0 + (1 + p) * kInImSize + y_position_0 + 1 + q];
 
     //       //second convolution
     //       res00_01 += curr_weight *
