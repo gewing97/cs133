@@ -82,19 +82,19 @@ void CnnKernel(__global const float* input, __global const float* weight,
 
   __local float local_input[64][7][19];
 
-  int num_layers_per = 256 / get_local_size(1);
+  int local_size = get_local_size(0);
   printf("num layers per %d\n", num_layers_per);
 
 
-  x_position_0 += local_layer * input_layer_size;
+  x_position_0 += local_size * input_layer_size;
   for (int i = 0; i < 4; i++){
-    for (int j = local_layer; j < 64; j += num_layers_per) {
+    for (int j = local_layer; j < 64; j += local_size) {
       for (int p = 0; p < 7; ++p) {
         for (int q = 0; q < 19; ++q) {
           local_input[j][p][q] = input[x_position_0 + p * kInImSize + y_position_0 + q];
         }
       }
-      x_position_0 += num_layers_per * input_layer_size;
+      x_position_0 += local_size * input_layer_size;
       printf("%d\n", x_position_0);
 
     }   
