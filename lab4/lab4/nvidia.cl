@@ -95,7 +95,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
         }
       }
       x_position_0 += local_size * input_layer_size;
-      // printf("%d\n", x_position_0);
+      printf("%d\n", x_position_0);
 
     }   
     for (int j = 0; j < 64; ++j) {
