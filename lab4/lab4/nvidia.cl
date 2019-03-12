@@ -188,6 +188,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
         }
       }
       weight_layer_position += kKernel * kKernel;
+      x_position_0 += input_layer_size;
     }
   // }
   // avoid function calls
