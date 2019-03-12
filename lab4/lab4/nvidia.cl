@@ -69,15 +69,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
   int weight_layer_position = layer * kNum * kKernel * kKernel;
   int input_layer_size = kInImSize*kInImSize;
   int x_position_0 = (pixel_x * 2) * kInImSize;
-  int x_position_1 = ((pixel_x + 1) * 2) * kInImSize;
   int y_position_0 = (pixel_y * 2);
-  int y_position_1 = ((pixel_y + 1) * 2);
-  int y_position_2 = ((pixel_y + 2) * 2); 
-  int y_position_3 = ((pixel_y + 3) * 2); 
-  int y_position_4 = ((pixel_y + 4) * 2);
-  int y_position_5 = ((pixel_y + 5) * 2);
-  int y_position_6 = ((pixel_y + 6) * 2); 
-  int y_position_7 = ((pixel_y + 7) * 2);   
 
   __local float local_input[8][8][20];
 
