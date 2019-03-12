@@ -315,7 +315,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_7 + 1 + q];
         }
       }
-      // weight_layer_position += kKernel * kKernel;
+      weight_layer_position += kKernel * kKernel;
       // x_position_0 += input_layer_size;
       // x_position_1 += input_layer_size;
     }
