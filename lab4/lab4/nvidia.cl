@@ -101,8 +101,9 @@ void CnnKernel(__global const float* input, __global const float* weight,
     for (int j = 0; j < 256; ++j) {
       for( int p = 0; p < 5; p++) {
         //assumes (32 8 1)
-        local_input[local_x][index_x][index_y + p] = input[x_position_0 + index_y * kInImSize + y_position_0 + index_y + p];
+        local_input[local_x][index_x][index_y + p] = input[x_position_0 + index_x * kInImSize + y_position_0 + index_y + p];
       }
+      x_position_0 += input_layer_size;
       for (int p = 0; p < 5; ++p) {
         for (int q = 0; q < 5; ++q) {
           float curr_weight = weight[weight_layer_position + (p * kKernel) + q];
@@ -188,7 +189,6 @@ void CnnKernel(__global const float* input, __global const float* weight,
         }
       }
       weight_layer_position += kKernel * kKernel;
-      x_position_0 += input_layer_size;
     }
   // }
   // avoid function calls
