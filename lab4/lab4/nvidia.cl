@@ -83,7 +83,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
   __local float local_input[64][7][19];
 
   int local_size = get_local_size(0);
-  printf("local_size %d\n", local_size);
+  // printf("local_size %d\n", local_size);
 
   x_position_0 += local_size * input_layer_size;
   for (int i = 0; i < 4; i++){
@@ -94,9 +94,10 @@ void CnnKernel(__global const float* input, __global const float* weight,
         }
       }
       x_position_0 += local_size * input_layer_size;
-      printf("%d\n", x_position_0);
+      // printf("%d\n", x_position_0);
 
     }   
+    printf("finished loading section %d\n", i);
     for (int j = 0; j < 64; ++j) {
       for (int p = 0; p < 5; ++p) {
         for (int q = 0; q < 5; ++q) {
