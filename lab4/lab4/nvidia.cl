@@ -97,7 +97,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
     // printf("finished loading section %d\n", i);
     int index_x = local_layer % 8;
     int index_y = (local_layer / 8) * 5;
-    printf("%d %d %d %d\n", layer, local_x, index_x, index_y);
+    // printf("%d %d %d %d\n", layer, local_x, index_x, index_y);
     for (int j = 0; j < 256; ++j) {
       for( int p = 0; p < 5; p++) {
         //assumes (32 8 1)
