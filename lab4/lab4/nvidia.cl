@@ -82,115 +82,103 @@ void CnnKernel(__global const float* input, __global const float* weight,
   __local float local_input[8][8][20];
 
   int local_size = get_local_size(0);
-  // printf("local_size %d\n", local_size);
 
-  // x_position_0 += local_layer * input_layer_size;
-  // for (int i = 0; i < 4; i++){
-  //   for (int j = local_layer; j < 64; j += local_size) {
-  //     for (int p = 0; p < 8; ++p) {
-  //       for (int q = 0; q < 20; ++q) {
-  //         local_input[j][p][q] = input[x_position_0 + p * kInImSize + y_position_0 + q];
-  //       }
-  //     }
-  //     x_position_0 += local_size * input_layer_size;
-  //   }   
-    // printf("finished loading section %d\n", i);
-    int index_x = local_layer % 8;
-    int index_y = (local_layer / 8) * 5;
-    // printf("%d %d %d %d\n", layer, local_x, index_x, index_y);
-    for (int j = 0; j < 256; ++j) {
-      for( int p = 0; p < 5; p++) {
-        //assumes (32 8 1)
-        local_input[local_x][index_x][index_y + p] = input[x_position_0 + index_x * kInImSize + y_position_0 + index_y + p];
-      }
-      x_position_0 += input_layer_size;
-      for (int p = 0; p < 5; ++p) {
-        for (int q = 0; q < 5; ++q) {
-          float curr_weight = weight[weight_layer_position + (p * kKernel) + q];
-          res00_00 += curr_weight * local_input[local_x][p][q];
-          res10_00 += curr_weight * local_input[local_x][p+1][q];
-          res01_00 += curr_weight * local_input[local_x][p][q+1];
-          res11_00 += curr_weight * local_input[local_x][p+1][q+1];
+  int index_x = local_layer % 8;
+  int index_y = (local_layer / 8) * 5;
 
-          res00_01 += curr_weight * local_input[local_x][p][q+2];
-          res10_01 += curr_weight * local_input[local_x][p+1][q+2];
-          res01_01 += curr_weight * local_input[local_x][p][q+3];
-          res11_01 += curr_weight * local_input[local_x][p+1][q+3];
-
-          res00_10 += curr_weight * local_input[local_x][p+2][q];
-          res10_10 += curr_weight * local_input[local_x][p+3][q];
-          res01_10 += curr_weight * local_input[local_x][p+2][q+1];
-          res11_10 += curr_weight * local_input[local_x][p+3][q+1];
-
-          res00_11 += curr_weight * local_input[local_x][p+2][q+2];
-          res10_11 += curr_weight * local_input[local_x][p+3][q+2];
-          res01_11 += curr_weight * local_input[local_x][p+2][q+3];
-          res11_11 += curr_weight * local_input[local_x][p+3][q+3];
-
-          res00_02 += curr_weight * local_input[local_x][p][q+4];
-          res10_02 += curr_weight * local_input[local_x][p+1][q+4];
-          res01_02 += curr_weight * local_input[local_x][p][q+5];
-          res11_02 += curr_weight * local_input[local_x][p+1][q+5];
-
-          res00_03 += curr_weight * local_input[local_x][p][q+6];
-          res10_03 += curr_weight * local_input[local_x][p+1][q+6];
-          res01_03 += curr_weight * local_input[local_x][p][q+7];
-          res11_03 += curr_weight * local_input[local_x][p+1][q+7];
-
-          res00_12 += curr_weight * local_input[local_x][p+2][q+4];
-          res10_12 += curr_weight * local_input[local_x][p+3][q+4];
-          res01_12 += curr_weight * local_input[local_x][p+2][q+5];
-          res11_12 += curr_weight * local_input[local_x][p+3][q+5];
-
-          res00_13 += curr_weight * local_input[local_x][p+2][q+6];
-          res10_13 += curr_weight * local_input[local_x][p+3][q+6];
-          res01_13 += curr_weight * local_input[local_x][p+2][q+7];
-          res11_13 += curr_weight * local_input[local_x][p+3][q+7];
-
-          res00_04 += curr_weight * local_input[local_x][p][q+8];
-          res10_04 += curr_weight * local_input[local_x][p+1][q+8];
-          res01_04 += curr_weight * local_input[local_x][p][q+9];
-          res11_04 += curr_weight * local_input[local_x][p+1][q+9];
-
-          res00_05 += curr_weight * local_input[local_x][p][q+10];
-          res10_05 += curr_weight * local_input[local_x][p+1][q+10];
-          res01_05 += curr_weight * local_input[local_x][p][q+11];
-          res11_05 += curr_weight * local_input[local_x][p+1][q+11];
-
-          res00_14 += curr_weight * local_input[local_x][p+2][q+8];
-          res10_14 += curr_weight * local_input[local_x][p+3][q+8];
-          res01_14 += curr_weight * local_input[local_x][p+2][q+9];
-          res11_14 += curr_weight * local_input[local_x][p+3][q+9];
-
-          res00_15 += curr_weight * local_input[local_x][p+2][q+10];
-          res10_15 += curr_weight * local_input[local_x][p+3][q+10];
-          res01_15 += curr_weight * local_input[local_x][p+2][q+11];
-          res11_15 += curr_weight * local_input[local_x][p+3][q+11];
-
-          res00_06 += curr_weight * local_input[local_x][p][q+12];
-          res10_06 += curr_weight * local_input[local_x][p+1][q+12];
-          res01_06 += curr_weight * local_input[local_x][p][q+13];
-          res11_06 += curr_weight * local_input[local_x][p+1][q+13];
-
-          res00_07 += curr_weight * local_input[local_x][p][q+14];
-          res10_07 += curr_weight * local_input[local_x][p+1][q+14];
-          res01_07 += curr_weight * local_input[local_x][p][q+15];
-          res11_07 += curr_weight * local_input[local_x][p+1][q+15];
-
-          res00_16 += curr_weight * local_input[local_x][p+2][q+12];
-          res10_16 += curr_weight * local_input[local_x][p+3][q+12];
-          res01_16 += curr_weight * local_input[local_x][p+2][q+13];
-          res11_16 += curr_weight * local_input[local_x][p+3][q+13];
-
-          res00_17 += curr_weight * local_input[local_x][p+2][q+14];
-          res10_17 += curr_weight * local_input[local_x][p+3][q+14];
-          res01_17 += curr_weight * local_input[local_x][p+2][q+15];
-          res11_17 += curr_weight * local_input[local_x][p+3][q+15];
-        }
-      }
-      weight_layer_position += kKernel * kKernel;
+  for (int j = 0; j < 256; ++j) {
+    for( int p = 0; p < 5; p++) {
+      //assumes (32 8 1)
+      local_input[local_x][index_x][index_y + p] = input[x_position_0 + index_x * kInImSize + y_position_0 + index_y + p];
     }
-  // }
+    x_position_0 += input_layer_size;
+    for (int p = 0; p < 5; ++p) {
+      for (int q = 0; q < 5; ++q) {
+        float curr_weight = weight[weight_layer_position + (p * kKernel) + q];
+        res00_00 += curr_weight * local_input[local_x][p][q];
+        res10_00 += curr_weight * local_input[local_x][p+1][q];
+        res01_00 += curr_weight * local_input[local_x][p][q+1];
+        res11_00 += curr_weight * local_input[local_x][p+1][q+1];
+
+        res00_01 += curr_weight * local_input[local_x][p][q+2];
+        res10_01 += curr_weight * local_input[local_x][p+1][q+2];
+        res01_01 += curr_weight * local_input[local_x][p][q+3];
+        res11_01 += curr_weight * local_input[local_x][p+1][q+3];
+
+        res00_10 += curr_weight * local_input[local_x][p+2][q];
+        res10_10 += curr_weight * local_input[local_x][p+3][q];
+        res01_10 += curr_weight * local_input[local_x][p+2][q+1];
+        res11_10 += curr_weight * local_input[local_x][p+3][q+1];
+
+        res00_11 += curr_weight * local_input[local_x][p+2][q+2];
+        res10_11 += curr_weight * local_input[local_x][p+3][q+2];
+        res01_11 += curr_weight * local_input[local_x][p+2][q+3];
+        res11_11 += curr_weight * local_input[local_x][p+3][q+3];
+
+        res00_02 += curr_weight * local_input[local_x][p][q+4];
+        res10_02 += curr_weight * local_input[local_x][p+1][q+4];
+        res01_02 += curr_weight * local_input[local_x][p][q+5];
+        res11_02 += curr_weight * local_input[local_x][p+1][q+5];
+
+        res00_03 += curr_weight * local_input[local_x][p][q+6];
+        res10_03 += curr_weight * local_input[local_x][p+1][q+6];
+        res01_03 += curr_weight * local_input[local_x][p][q+7];
+        res11_03 += curr_weight * local_input[local_x][p+1][q+7];
+
+        res00_12 += curr_weight * local_input[local_x][p+2][q+4];
+        res10_12 += curr_weight * local_input[local_x][p+3][q+4];
+        res01_12 += curr_weight * local_input[local_x][p+2][q+5];
+        res11_12 += curr_weight * local_input[local_x][p+3][q+5];
+
+        res00_13 += curr_weight * local_input[local_x][p+2][q+6];
+        res10_13 += curr_weight * local_input[local_x][p+3][q+6];
+        res01_13 += curr_weight * local_input[local_x][p+2][q+7];
+        res11_13 += curr_weight * local_input[local_x][p+3][q+7];
+
+        res00_04 += curr_weight * local_input[local_x][p][q+8];
+        res10_04 += curr_weight * local_input[local_x][p+1][q+8];
+        res01_04 += curr_weight * local_input[local_x][p][q+9];
+        res11_04 += curr_weight * local_input[local_x][p+1][q+9];
+
+        res00_05 += curr_weight * local_input[local_x][p][q+10];
+        res10_05 += curr_weight * local_input[local_x][p+1][q+10];
+        res01_05 += curr_weight * local_input[local_x][p][q+11];
+        res11_05 += curr_weight * local_input[local_x][p+1][q+11];
+
+        res00_14 += curr_weight * local_input[local_x][p+2][q+8];
+        res10_14 += curr_weight * local_input[local_x][p+3][q+8];
+        res01_14 += curr_weight * local_input[local_x][p+2][q+9];
+        res11_14 += curr_weight * local_input[local_x][p+3][q+9];
+
+        res00_15 += curr_weight * local_input[local_x][p+2][q+10];
+        res10_15 += curr_weight * local_input[local_x][p+3][q+10];
+        res01_15 += curr_weight * local_input[local_x][p+2][q+11];
+        res11_15 += curr_weight * local_input[local_x][p+3][q+11];
+
+        res00_06 += curr_weight * local_input[local_x][p][q+12];
+        res10_06 += curr_weight * local_input[local_x][p+1][q+12];
+        res01_06 += curr_weight * local_input[local_x][p][q+13];
+        res11_06 += curr_weight * local_input[local_x][p+1][q+13];
+
+        res00_07 += curr_weight * local_input[local_x][p][q+14];
+        res10_07 += curr_weight * local_input[local_x][p+1][q+14];
+        res01_07 += curr_weight * local_input[local_x][p][q+15];
+        res11_07 += curr_weight * local_input[local_x][p+1][q+15];
+
+        res00_16 += curr_weight * local_input[local_x][p+2][q+12];
+        res10_16 += curr_weight * local_input[local_x][p+3][q+12];
+        res01_16 += curr_weight * local_input[local_x][p+2][q+13];
+        res11_16 += curr_weight * local_input[local_x][p+3][q+13];
+
+        res00_17 += curr_weight * local_input[local_x][p+2][q+14];
+        res10_17 += curr_weight * local_input[local_x][p+3][q+14];
+        res01_17 += curr_weight * local_input[local_x][p+2][q+15];
+        res11_17 += curr_weight * local_input[local_x][p+3][q+15];
+      }
+    }
+    weight_layer_position += kKernel * kKernel;
+  }
+
   // avoid function calls
   float max_val_00 = (res00_00 > res01_00 ? res00_00 : res01_00) > (res10_00 > res11_00 ? res10_00 : res11_00) ? (res00_00 > res01_00 ? res00_00 : res01_00) : (res10_00 > res11_00 ? res10_00 : res11_00);
   output[(layer * layer_size) + (pixel_x * kOutImSize) + pixel_y] = max_val_00 > 0 ? max_val_00 : 0;
