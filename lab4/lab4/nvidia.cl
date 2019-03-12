@@ -90,72 +90,155 @@ void CnnKernel(__global const float* input, __global const float* weight,
     for (int j = local_layer; j < 64; j += local_size) {
       for (int p = 0; p < 5; ++p) {
         for (int q = 0; q < 5; ++q) {
-          local_input[j][p][q] = input[x_position_0 + p * kInImSize + y_position_0 + q];
-          local_input[j][p][q+1] = input[x_position_0 + p * kInImSize + y_position_0 + 1 + q];
-          local_input[j][p][q+2] = input[x_position_0 + p * kInImSize + y_position_1 + q];
-          local_input[j][p][q+3] = input[x_position_0 + p * kInImSize + y_position_1 + 1 + q];
-          local_input[j][p][q+4] = input[x_position_0 + p * kInImSize + y_position_2 + q];
-          local_input[j][p][q+5] = input[x_position_0 + p * kInImSize + y_position_2 + 1 + q];
-          local_input[j][p][q+6] = input[x_position_0 + p * kInImSize + y_position_3 + q];
-          local_input[j][p][q+7] = input[x_position_0 + p * kInImSize + y_position_3 + 1 + q];
-          local_input[j][p][q+8] = input[x_position_0 + p * kInImSize + y_position_4 + q];
-          local_input[j][p][q+9] = input[x_position_0 + p * kInImSize + y_position_4 + 1 + q];
-          local_input[j][p][q+10] = input[x_position_0 + p * kInImSize + y_position_5 + q];
-          local_input[j][p][q+11] = input[x_position_0 + p * kInImSize + y_position_5 + 1 + q];
-          local_input[j][p][q+12] = input[x_position_0 + p * kInImSize + y_position_6 + q];
-          local_input[j][p][q+13] = input[x_position_0 + p * kInImSize + y_position_6 + 1 + q];
-          local_input[j][p][q+14] = input[x_position_0 + p * kInImSize + y_position_7 + q];
-          local_input[j][p][q+15] = input[x_position_0 + p * kInImSize + y_position_7 + 1 + q];
+          // local_input[j][p][q] = input[x_position_0 + p * kInImSize + y_position_0 + q];
+          // local_input[j][p][q+1] = input[x_position_0 + p * kInImSize + y_position_0 + 1 + q];
+          // local_input[j][p][q+2] = input[x_position_0 + p * kInImSize + y_position_1 + q];
+          // local_input[j][p][q+3] = input[x_position_0 + p * kInImSize + y_position_1 + 1 + q];
+          // local_input[j][p][q+4] = input[x_position_0 + p * kInImSize + y_position_2 + q];
+          // local_input[j][p][q+5] = input[x_position_0 + p * kInImSize + y_position_2 + 1 + q];
+          // local_input[j][p][q+6] = input[x_position_0 + p * kInImSize + y_position_3 + q];
+          // local_input[j][p][q+7] = input[x_position_0 + p * kInImSize + y_position_3 + 1 + q];
+          // local_input[j][p][q+8] = input[x_position_0 + p * kInImSize + y_position_4 + q];
+          // local_input[j][p][q+9] = input[x_position_0 + p * kInImSize + y_position_4 + 1 + q];
+          // local_input[j][p][q+10] = input[x_position_0 + p * kInImSize + y_position_5 + q];
+          // local_input[j][p][q+11] = input[x_position_0 + p * kInImSize + y_position_5 + 1 + q];
+          // local_input[j][p][q+12] = input[x_position_0 + p * kInImSize + y_position_6 + q];
+          // local_input[j][p][q+13] = input[x_position_0 + p * kInImSize + y_position_6 + 1 + q];
+          // local_input[j][p][q+14] = input[x_position_0 + p * kInImSize + y_position_7 + q];
+          // local_input[j][p][q+15] = input[x_position_0 + p * kInImSize + y_position_7 + 1 + q];
 
+          // local_input[j][p+1][q] = input[x_position_0 + (1 + p) * kInImSize + y_position_0 + q];
+          // local_input[j][p+1][q+1] = input[x_position_0 + (1 + p) * kInImSize + y_position_0 + 1 + q];
+          // local_input[j][p+1][q+2] = input[x_position_0 + (1 + p) * kInImSize + y_position_1 + q];
+          // local_input[j][p+1][q+3] = input[x_position_0 + (1 + p) * kInImSize + y_position_1 + 1 + q];
+          // local_input[j][p+1][q+4] = input[x_position_0 + (1 + p) * kInImSize + y_position_2 + q];
+          // local_input[j][p+1][q+5] = input[x_position_0 + (1 + p) * kInImSize + y_position_2 + 1 + q];
+          // local_input[j][p+1][q+6] = input[x_position_0 + (1 + p) * kInImSize + y_position_3 + q];
+          // local_input[j][p+1][q+7] = input[x_position_0 + (1 + p) * kInImSize + y_position_3 + 1 + q];
+          // local_input[j][p+1][q+8] = input[x_position_0 + (1 + p) * kInImSize + y_position_4 + q];
+          // local_input[j][p+1][q+9] = input[x_position_0 + (1 + p) * kInImSize + y_position_4 + 1 + q];
+          // local_input[j][p+1][q+10] = input[x_position_0 + (1 + p) * kInImSize + y_position_5 + q];
+          // local_input[j][p+1][q+11] = input[x_position_0 + (1 + p) * kInImSize + y_position_5 + 1 + q];
+          // local_input[j][p+1][q+12] = input[x_position_0 + (1 + p) * kInImSize + y_position_6 + q];
+          // local_input[j][p+1][q+13] = input[x_position_0 + (1 + p) * kInImSize + y_position_6 + 1 + q];
+          // local_input[j][p+1][q+14] = input[x_position_0 + (1 + p) * kInImSize + y_position_7 + q];
+          // local_input[j][p+1][q+15] = input[x_position_0 + (1 + p) * kInImSize + y_position_7 + 1 + q];
+
+          // local_input[j][p+2][q] = input[x_position_1 + p * kInImSize + y_position_0 + q];
+          // local_input[j][p+2][q+1] = input[x_position_1 + p * kInImSize + y_position_0 + 1 + q];
+          // local_input[j][p+2][q+2] = input[x_position_1 + p * kInImSize + y_position_1 + q];
+          // local_input[j][p+2][q+3] = input[x_position_1 + p * kInImSize + y_position_1 + 1 + q];
+          // local_input[j][p+2][q+4] = input[x_position_1 + p * kInImSize + y_position_2 + q];
+          // local_input[j][p+2][q+5] = input[x_position_1 + p * kInImSize + y_position_2 + 1 + q];
+          // local_input[j][p+2][q+6] = input[x_position_1 + p * kInImSize + y_position_3 + q];
+          // local_input[j][p+2][q+7] = input[x_position_1 + p * kInImSize + y_position_3 + 1 + q];
+          // local_input[j][p+2][q+8] = input[x_position_1 + p * kInImSize + y_position_4 + q];
+          // local_input[j][p+2][q+9] = input[x_position_1 + p * kInImSize + y_position_4 + 1 + q];
+          // local_input[j][p+2][q+10] = input[x_position_1 + p * kInImSize + y_position_5 + q];
+          // local_input[j][p+2][q+11] = input[x_position_1 + p * kInImSize + y_position_5 + 1 + q];
+          // local_input[j][p+2][q+12] = input[x_position_1 + p * kInImSize + y_position_6 + q];
+          // local_input[j][p+2][q+13] = input[x_position_1 + p * kInImSize + y_position_6 + 1 + q];
+          // local_input[j][p+2][q+14] = input[x_position_1 + p * kInImSize + y_position_7 + q];
+          // local_input[j][p+2][q+15] = input[x_position_1 + p * kInImSize + y_position_7 + 1 + q];
+
+          // local_input[j][p+3][q] = input[x_position_1 + (1 + p) * kInImSize + y_position_0 + q];
+          // local_input[j][p+3][q+1] = input[x_position_1 + (1 + p) * kInImSize + y_position_0 + 1 + q];
+          // local_input[j][p+3][q+2] = input[x_position_1 + (1 + p) * kInImSize + y_position_1 + q];
+          // local_input[j][p+3][q+3] = input[x_position_1 + (1 + p) * kInImSize + y_position_1 + 1 + q];
+          // local_input[j][p+3][q+4] = input[x_position_1 + (1 + p) * kInImSize + y_position_2 + q];
+          // local_input[j][p+3][q+5] = input[x_position_1 + (1 + p) * kInImSize + y_position_2 + 1 + q];
+          // local_input[j][p+3][q+6] = input[x_position_1 + (1 + p) * kInImSize + y_position_3 + q];
+          // local_input[j][p+3][q+7] = input[x_position_1 + (1 + p) * kInImSize + y_position_3 + 1 + q];
+          // local_input[j][p+3][q+8] = input[x_position_1 + (1 + p) * kInImSize + y_position_4 + q];
+          // local_input[j][p+3][q+9] = input[x_position_1 + (1 + p) * kInImSize + y_position_4 + 1 + q];
+          // local_input[j][p+3][q+10] = input[x_position_1 + (1 + p) * kInImSize + y_position_5 + q];
+          // local_input[j][p+3][q+11] = input[x_position_1 + (1 + p) * kInImSize + y_position_5 + 1 + q];
+          // local_input[j][p+3][q+12] = input[x_position_1 + (1 + p) * kInImSize + y_position_6 + q];
+          // local_input[j][p+3][q+13] = input[x_position_1 + (1 + p) * kInImSize + y_position_6 + 1 + q];
+          // local_input[j][p+3][q+14] = input[x_position_1 + (1 + p) * kInImSize + y_position_7 + q];
+          // local_input[j][p+3][q+15] = input[x_position_1 + (1 + p) * kInImSize + y_position_7 + 1 + q];
+
+          local_input[j][p][q] = input[x_position_0 + p * kInImSize + y_position_0 + q];
           local_input[j][p+1][q] = input[x_position_0 + (1 + p) * kInImSize + y_position_0 + q];
+          local_input[j][p][q+1] = input[x_position_0 + p * kInImSize + y_position_0 + 1 + q];
           local_input[j][p+1][q+1] = input[x_position_0 + (1 + p) * kInImSize + y_position_0 + 1 + q];
+
+          //second convolution
+          local_input[j][p][q+2] = input[x_position_0 + p * kInImSize + y_position_1 + q];
           local_input[j][p+1][q+2] = input[x_position_0 + (1 + p) * kInImSize + y_position_1 + q];
+          local_input[j][p][q+3] = input[x_position_0 + p * kInImSize + y_position_1 + 1 + q];
           local_input[j][p+1][q+3] = input[x_position_0 + (1 + p) * kInImSize + y_position_1 + 1 + q];
+
+          //third convolution
+          local_input[j][p+2][q] = input[x_position_1 + p * kInImSize + y_position_0 + q];
+          local_input[j][p+3][q] = input[x_position_1 + (1 + p) * kInImSize + y_position_0 + q];
+          local_input[j][p+2][q+1] = input[x_position_1 + p * kInImSize + y_position_0 + 1 + q];
+          local_input[j][p+3][q+1] = input[x_position_1 + (1 + p) * kInImSize + y_position_0 + 1 + q];
+
+          //fourth convolution
+          local_input[j][p+2][q+2] = input[x_position_1 + p * kInImSize + y_position_1 + q];
+          local_input[j][p+3][q+2] = input[x_position_1 + (1 + p) * kInImSize + y_position_1 + q];
+          local_input[j][p+2][q+3] = input[x_position_1 + p * kInImSize + y_position_1 + 1 + q];
+          local_input[j][p+3][q+3] = input[x_position_1 + (1 + p) * kInImSize + y_position_1 + 1 + q];
+
+          local_input[j][p][q+4] = input[x_position_0 + p * kInImSize + y_position_2 + q];
           local_input[j][p+1][q+4] = input[x_position_0 + (1 + p) * kInImSize + y_position_2 + q];
+          local_input[j][p][q+5] = input[x_position_0 + p * kInImSize + y_position_2 + 1 + q];
           local_input[j][p+1][q+5] = input[x_position_0 + (1 + p) * kInImSize + y_position_2 + 1 + q];
+
+          local_input[j][p][q+6] = input[x_position_0 + p * kInImSize + y_position_3 + q];
           local_input[j][p+1][q+6] = input[x_position_0 + (1 + p) * kInImSize + y_position_3 + q];
+          local_input[j][p][q+7] = input[x_position_0 + p * kInImSize + y_position_3 + 1 + q];
           local_input[j][p+1][q+7] = input[x_position_0 + (1 + p) * kInImSize + y_position_3 + 1 + q];
+
+          local_input[j][p+2][q+4] = input[x_position_1 + p * kInImSize + y_position_2 + q];
+          local_input[j][p+3][q+4] = input[x_position_1 + (1 + p) * kInImSize + y_position_2 + q];
+          local_input[j][p+2][q+5] = input[x_position_1 + p * kInImSize + y_position_2 + 1 + q];
+          local_input[j][p+3][q+5] = input[x_position_1 + (1 + p) * kInImSize + y_position_2 + 1 + q];
+
+          local_input[j][p+2][q+6] = input[x_position_1 + p * kInImSize + y_position_3 + q];
+          local_input[j][p+3][q+6] = input[x_position_1 + (1 + p) * kInImSize + y_position_3 + q];
+          local_input[j][p+2][q+7] = input[x_position_1 + p * kInImSize + y_position_3 + 1 + q];
+          local_input[j][p+3][q+7] = input[x_position_1 + (1 + p) * kInImSize + y_position_3 + 1 + q];
+
+          local_input[j][p][q+8] = input[x_position_0 + p * kInImSize + y_position_4 + q];
           local_input[j][p+1][q+8] = input[x_position_0 + (1 + p) * kInImSize + y_position_4 + q];
+          local_input[j][p][q+9] = input[x_position_0 + p * kInImSize + y_position_4 + 1 + q];
           local_input[j][p+1][q+9] = input[x_position_0 + (1 + p) * kInImSize + y_position_4 + 1 + q];
+
+          local_input[j][p][q+10] = input[x_position_0 + p * kInImSize + y_position_5 + q];
           local_input[j][p+1][q+10] = input[x_position_0 + (1 + p) * kInImSize + y_position_5 + q];
+          local_input[j][p][q+11] = input[x_position_0 + p * kInImSize + y_position_5 + 1 + q];
           local_input[j][p+1][q+11] = input[x_position_0 + (1 + p) * kInImSize + y_position_5 + 1 + q];
+
+          local_input[j][p+2][q+8] = input[x_position_1 + p * kInImSize + y_position_4 + q];
+          local_input[j][p+3][q+8] = input[x_position_1 + (1 + p) * kInImSize + y_position_4 + q];
+          local_input[j][p+2][q+9] = input[x_position_1 + p * kInImSize + y_position_4 + 1 + q];
+          local_input[j][p+3][q+9] = input[x_position_1 + (1 + p) * kInImSize + y_position_4 + 1 + q];
+
+          local_input[j][p+2][q+10] = input[x_position_1 + p * kInImSize + y_position_5 + q];
+          local_input[j][p+3][q+10] = input[x_position_1 + (1 + p) * kInImSize + y_position_5 + q];
+          local_input[j][p+2][q+11] = input[x_position_1 + p * kInImSize + y_position_5 + 1 + q];
+          local_input[j][p+3][q+11] = input[x_position_1 + (1 + p) * kInImSize + y_position_5 + 1 + q];
+
+          local_input[j][p][q+12] = input[x_position_0 + p * kInImSize + y_position_6 + q];
           local_input[j][p+1][q+12] = input[x_position_0 + (1 + p) * kInImSize + y_position_6 + q];
+          local_input[j][p][q+13] = input[x_position_0 + p * kInImSize + y_position_6 + 1 + q];
           local_input[j][p+1][q+13] = input[x_position_0 + (1 + p) * kInImSize + y_position_6 + 1 + q];
+
+          local_input[j][p][q+14] = input[x_position_0 + p * kInImSize + y_position_7 + q];
           local_input[j][p+1][q+14] = input[x_position_0 + (1 + p) * kInImSize + y_position_7 + q];
+          local_input[j][p][q+15] = input[x_position_0 + p * kInImSize + y_position_7 + 1 + q];
           local_input[j][p+1][q+15] = input[x_position_0 + (1 + p) * kInImSize + y_position_7 + 1 + q];
 
-          local_input[j][p+2][q] = input[x_position_1 + p * kInImSize + y_position_0 + q];
-          local_input[j][p+2][q+1] = input[x_position_1 + p * kInImSize + y_position_0 + 1 + q];
-          local_input[j][p+2][q+2] = input[x_position_1 + p * kInImSize + y_position_1 + q];
-          local_input[j][p+2][q+3] = input[x_position_1 + p * kInImSize + y_position_1 + 1 + q];
-          local_input[j][p+2][q+4] = input[x_position_1 + p * kInImSize + y_position_2 + q];
-          local_input[j][p+2][q+5] = input[x_position_1 + p * kInImSize + y_position_2 + 1 + q];
-          local_input[j][p+2][q+6] = input[x_position_1 + p * kInImSize + y_position_3 + q];
-          local_input[j][p+2][q+7] = input[x_position_1 + p * kInImSize + y_position_3 + 1 + q];
-          local_input[j][p+2][q+8] = input[x_position_1 + p * kInImSize + y_position_4 + q];
-          local_input[j][p+2][q+9] = input[x_position_1 + p * kInImSize + y_position_4 + 1 + q];
-          local_input[j][p+2][q+10] = input[x_position_1 + p * kInImSize + y_position_5 + q];
-          local_input[j][p+2][q+11] = input[x_position_1 + p * kInImSize + y_position_5 + 1 + q];
           local_input[j][p+2][q+12] = input[x_position_1 + p * kInImSize + y_position_6 + q];
-          local_input[j][p+2][q+13] = input[x_position_1 + p * kInImSize + y_position_6 + 1 + q];
-          local_input[j][p+2][q+14] = input[x_position_1 + p * kInImSize + y_position_7 + q];
-          local_input[j][p+2][q+15] = input[x_position_1 + p * kInImSize + y_position_7 + 1 + q];
-
-          local_input[j][p+3][q] = input[x_position_1 + (1 + p) * kInImSize + y_position_0 + q];
-          local_input[j][p+3][q+1] = input[x_position_1 + (1 + p) * kInImSize + y_position_0 + 1 + q];
-          local_input[j][p+3][q+2] = input[x_position_1 + (1 + p) * kInImSize + y_position_1 + q];
-          local_input[j][p+3][q+3] = input[x_position_1 + (1 + p) * kInImSize + y_position_1 + 1 + q];
-          local_input[j][p+3][q+4] = input[x_position_1 + (1 + p) * kInImSize + y_position_2 + q];
-          local_input[j][p+3][q+5] = input[x_position_1 + (1 + p) * kInImSize + y_position_2 + 1 + q];
-          local_input[j][p+3][q+6] = input[x_position_1 + (1 + p) * kInImSize + y_position_3 + q];
-          local_input[j][p+3][q+7] = input[x_position_1 + (1 + p) * kInImSize + y_position_3 + 1 + q];
-          local_input[j][p+3][q+8] = input[x_position_1 + (1 + p) * kInImSize + y_position_4 + q];
-          local_input[j][p+3][q+9] = input[x_position_1 + (1 + p) * kInImSize + y_position_4 + 1 + q];
-          local_input[j][p+3][q+10] = input[x_position_1 + (1 + p) * kInImSize + y_position_5 + q];
-          local_input[j][p+3][q+11] = input[x_position_1 + (1 + p) * kInImSize + y_position_5 + 1 + q];
           local_input[j][p+3][q+12] = input[x_position_1 + (1 + p) * kInImSize + y_position_6 + q];
+          local_input[j][p+2][q+13] = input[x_position_1 + p * kInImSize + y_position_6 + 1 + q];
           local_input[j][p+3][q+13] = input[x_position_1 + (1 + p) * kInImSize + y_position_6 + 1 + q];
+
+          local_input[j][p+2][q+14] = input[x_position_1 + p * kInImSize + y_position_7 + q];
           local_input[j][p+3][q+14] = input[x_position_1 + (1 + p) * kInImSize + y_position_7 + q];
+          local_input[j][p+2][q+15] = input[x_position_1 + p * kInImSize + y_position_7 + 1 + q];
           local_input[j][p+3][q+15] = input[x_position_1 + (1 + p) * kInImSize + y_position_7 + 1 + q];
         }
       }
@@ -168,215 +251,151 @@ void CnnKernel(__global const float* input, __global const float* weight,
         for (int q = 0; q < 5; ++q) {
           float curr_weight = weight[weight_layer_position + (p * kKernel) + q];
           //first convolution
-          res00_00 += curr_weight *
-                      local_input[j][p][q];
+          res00_00 += curr_weight * local_input[j][p][q];
                       // input[x_position_0 + p * kInImSize + y_position_0 + q];
-          res10_00 += curr_weight *
-                      local_input[j][p+1][q];
+          res10_00 += curr_weight * local_input[j][p+1][q];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_0 + q];
-          res01_00 += curr_weight *
-                      local_input[j][p][q+1];
+          res01_00 += curr_weight * local_input[j][p][q+1];
                       // input[x_position_0 + p * kInImSize + y_position_0 + 1 + q];
-          res11_00 += curr_weight *
-                      local_input[j][p+1][q+1];
+          res11_00 += curr_weight * local_input[j][p+1][q+1];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_0 + 1 + q];
 
           //second convolution
-          res00_01 += curr_weight *
-                      local_input[j][p][q+2];
+          res00_01 += curr_weight * local_input[j][p][q+2];
                       // input[x_position_0 + p * kInImSize + y_position_1 + q];
-          res10_01 += curr_weight *
-                      local_input[j][p+1][q+2];
+          res10_01 += curr_weight * local_input[j][p+1][q+2];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_1 + q];
-          res01_01 += curr_weight *
-                      local_input[j][p][q+3];
+          res01_01 += curr_weight * local_input[j][p][q+3];
                       // input[x_position_0 + p * kInImSize + y_position_1 + 1 + q];
-          res11_01 += curr_weight *
-                      local_input[j][p+1][q+3];
+          res11_01 += curr_weight * local_input[j][p+1][q+3];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_1 + 1 + q];
 
           //third convolution
-          res00_10 += curr_weight *
-                      local_input[j][p+2][q];
+          res00_10 += curr_weight * local_input[j][p+2][q];
                       // input[x_position_1 + p * kInImSize + y_position_0 + q];
-          res10_10 += curr_weight *
-                      local_input[j][p+3][q];
+          res10_10 += curr_weight * local_input[j][p+3][q];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_0 + q];
-          res01_10 += curr_weight *
-                      local_input[j][p+2][q+1];
+          res01_10 += curr_weight * local_input[j][p+2][q+1];
                       // input[x_position_1 + p * kInImSize + y_position_0 + 1 + q];
-          res11_10 += curr_weight *
-                      local_input[j][p+3][q+1];
+          res11_10 += curr_weight * local_input[j][p+3][q+1];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_0 + 1 + q];
 
           //fourth convolution
-          res00_11 += curr_weight *
-                      local_input[j][p+2][q+2];
+          res00_11 += curr_weight * local_input[j][p+2][q+2];
                       // input[x_position_1 + p * kInImSize + y_position_1 + q];
-          res10_11 += curr_weight *
-                      local_input[j][p+3][q+2];
+          res10_11 += curr_weight * local_input[j][p+3][q+2];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_1 + q];
-          res01_11 += curr_weight *
-                      local_input[j][p+2][q+3];
+          res01_11 += curr_weight * local_input[j][p+2][q+3];
                       // input[x_position_1 + p * kInImSize + y_position_1 + 1 + q];
-          res11_11 += curr_weight *
-                      local_input[j][p+3][q+3];
+          res11_11 += curr_weight * local_input[j][p+3][q+3];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_1 + 1 + q];
 
-          res00_02 += curr_weight *
-                      local_input[j][p][q+4];
+          res00_02 += curr_weight * local_input[j][p][q+4];
                       // input[x_position_0 + p * kInImSize + y_position_2 + q];
-          res10_02 += curr_weight *
-                      local_input[j][p+1][q+4];
+          res10_02 += curr_weight * local_input[j][p+1][q+4];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_2 + q];
-          res01_02 += curr_weight *
-                      local_input[j][p][q+5];
+          res01_02 += curr_weight * local_input[j][p][q+5];
                       // input[x_position_0 + p * kInImSize + y_position_2 + 1 + q];
-          res11_02 += curr_weight *
-                      local_input[j][p+1][q+5];
+          res11_02 += curr_weight * local_input[j][p+1][q+5];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_2 + 1 + q];
 
-          res00_03 += curr_weight *
-                      local_input[j][p][q+6];
+          res00_03 += curr_weight * local_input[j][p][q+6];
                       // input[x_position_0 + p * kInImSize + y_position_3 + q];
-          res10_03 += curr_weight *
-                      local_input[j][p+1][q+6];
+          res10_03 += curr_weight * local_input[j][p+1][q+6];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_3 + q];
-          res01_03 += curr_weight *
-                      local_input[j][p][q+7];
+          res01_03 += curr_weight * local_input[j][p][q+7];
                       // input[x_position_0 + p * kInImSize + y_position_3 + 1 + q];
-          res11_03 += curr_weight *
-                      local_input[j][p+1][q+7];
+          res11_03 += curr_weight * local_input[j][p+1][q+7];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_3 + 1 + q];
 
-          res00_12 += curr_weight *
-                      local_input[j][p+2][q+4];
+          res00_12 += curr_weight * local_input[j][p+2][q+4];
                       // input[x_position_1 + p * kInImSize + y_position_2 + q];
-          res10_12 += curr_weight *
-                      local_input[j][p+3][q+4];
+          res10_12 += curr_weight * local_input[j][p+3][q+4];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_2 + q];
-          res01_12 += curr_weight *
-                      local_input[j][p+2][q+5];
+          res01_12 += curr_weight * local_input[j][p+2][q+5];
                       // input[x_position_1 + p * kInImSize + y_position_2 + 1 + q];
-          res11_12 += curr_weight *
-                      local_input[j][p+3][q+5];
+          res11_12 += curr_weight * local_input[j][p+3][q+5];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_2 + 1 + q];
 
-          res00_13 += curr_weight *
-                      local_input[j][p+2][q+6];
+          res00_13 += curr_weight * local_input[j][p+2][q+6];
                       // input[x_position_1 + p * kInImSize + y_position_3 + q];
-          res10_13 += curr_weight *
-                      local_input[j][p+3][q+6];
+          res10_13 += curr_weight * local_input[j][p+3][q+6];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_3 + q];
-          res01_13 += curr_weight *
-                      local_input[j][p+2][q+7];
+          res01_13 += curr_weight * local_input[j][p+2][q+7];
                       // input[x_position_1 + p * kInImSize + y_position_3 + 1 + q];
-          res11_13 += curr_weight *
-                      local_input[j][p+3][q+7];
+          res11_13 += curr_weight * local_input[j][p+3][q+7];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_3 + 1 + q];
 
-          res00_04 += curr_weight *
-                      local_input[j][p][q+8];
+          res00_04 += curr_weight * local_input[j][p][q+8];
                       // input[x_position_0 + p * kInImSize + y_position_4 + q];
-          res10_04 += curr_weight *
-                      local_input[j][p+1][q+8];
+          res10_04 += curr_weight * local_input[j][p+1][q+8];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_4 + q];
-          res01_04 += curr_weight *
-                      local_input[j][p][q+9];
+          res01_04 += curr_weight * local_input[j][p][q+9];
                       // input[x_position_0 + p * kInImSize + y_position_4 + 1 + q];
-          res11_04 += curr_weight *
-                      local_input[j][p+1][q+9];
+          res11_04 += curr_weight * local_input[j][p+1][q+9];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_4 + 1 + q];
 
-          res00_05 += curr_weight *
-                      local_input[j][p][q+10];
+          res00_05 += curr_weight * local_input[j][p][q+10];
                       // input[x_position_0 + p * kInImSize + y_position_5 + q];
-          res10_05 += curr_weight *
-                      local_input[j][p+1][q+10];
+          res10_05 += curr_weight * local_input[j][p+1][q+10];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_5 + q];
-          res01_05 += curr_weight *
-                      local_input[j][p][q+11];
+          res01_05 += curr_weight * local_input[j][p][q+11];
                       // input[x_position_0 + p * kInImSize + y_position_5 + 1 + q];
-          res11_05 += curr_weight *
-                      local_input[j][p+1][q+11];
+          res11_05 += curr_weight * local_input[j][p+1][q+11];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_5 + 1 + q];
 
-          res00_14 += curr_weight *
-                      local_input[j][p+2][q+8];
+          res00_14 += curr_weight * local_input[j][p+2][q+8];
                       // input[x_position_1 + p * kInImSize + y_position_4 + q];
-          res10_14 += curr_weight *
-                      local_input[j][p+3][q+8];
+          res10_14 += curr_weight * local_input[j][p+3][q+8];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_4 + q];
-          res01_14 += curr_weight *
-                      local_input[j][p+2][q+9];
+          res01_14 += curr_weight * local_input[j][p+2][q+9];
                       // input[x_position_1 + p * kInImSize + y_position_4 + 1 + q];
-          res11_14 += curr_weight *
-                      local_input[j][p+3][q+9];
+          res11_14 += curr_weight * local_input[j][p+3][q+9];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_4 + 1 + q];
 
-          res00_15 += curr_weight *
-                      local_input[j][p+2][q+10];
+          res00_15 += curr_weight * local_input[j][p+2][q+10];
                       // input[x_position_1 + p * kInImSize + y_position_5 + q];
-          res10_15 += curr_weight *
-                      local_input[j][p+3][q+10];
+          res10_15 += curr_weight * local_input[j][p+3][q+10];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_5 + q];
-          res01_15 += curr_weight *
-                      local_input[j][p+2][q+11];
+          res01_15 += curr_weight * local_input[j][p+2][q+11];
                       // input[x_position_1 + p * kInImSize + y_position_5 + 1 + q];
-          res11_15 += curr_weight *
-                      local_input[j][p+3][q+11];
+          res11_15 += curr_weight * local_input[j][p+3][q+11];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_5 + 1 + q];
 
-          res00_06 += curr_weight *
-                      local_input[j][p][q+12];
+          res00_06 += curr_weight * local_input[j][p][q+12];
                       // input[x_position_0 + p * kInImSize + y_position_6 + q];
-          res10_06 += curr_weight *
-                      local_input[j][p+1][q+12];
+          res10_06 += curr_weight * local_input[j][p+1][q+12];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_6 + q];
-          res01_06 += curr_weight *
-                      local_input[j][p][q+13];
+          res01_06 += curr_weight * local_input[j][p][q+13];
                       // input[x_position_0 + p * kInImSize + y_position_6 + 1 + q];
-          res11_06 += curr_weight *
-                      local_input[j][p+1][q+13];
+          res11_06 += curr_weight * local_input[j][p+1][q+13];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_6 + 1 + q];
 
-          res00_07 += curr_weight *
-                      local_input[j][p][q+14];
+          res00_07 += curr_weight * local_input[j][p][q+14];
                       // input[x_position_0 + p * kInImSize + y_position_7 + q];
-          res10_07 += curr_weight *
-                      local_input[j][p+1][q+14];
+          res10_07 += curr_weight * local_input[j][p+1][q+14];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_7 + q];
-          res01_07 += curr_weight *
-                      local_input[j][p][q+15];
+          res01_07 += curr_weight * local_input[j][p][q+15];
                       // input[x_position_0 + p * kInImSize + y_position_7 + 1 + q];
-          res11_07 += curr_weight *
-                      local_input[j][p+1][q+15];
+          res11_07 += curr_weight * local_input[j][p+1][q+15];
                       // input[x_position_0 + (1 + p) * kInImSize + y_position_7 + 1 + q];
 
-          res00_16 += curr_weight *
-                      local_input[j][p+2][q+12];
+          res00_16 += curr_weight * local_input[j][p+2][q+12];
                       // input[x_position_1 + p * kInImSize + y_position_6 + q];
-          res10_16 += curr_weight *
-                      local_input[j][p+3][q+12];
+          res10_16 += curr_weight * local_input[j][p+3][q+12];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_6 + q];
-          res01_16 += curr_weight *
-                      local_input[j][p+2][q+13];
+          res01_16 += curr_weight * local_input[j][p+2][q+13];
                       // input[x_position_1 + p * kInImSize + y_position_6 + 1 + q];
-          res11_16 += curr_weight *
-                      local_input[j][p+3][q+13];
+          res11_16 += curr_weight * local_input[j][p+3][q+13];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_6 + 1 + q];
 
-          res00_17 += curr_weight *
-                      local_input[j][p+2][q+14];
+          res00_17 += curr_weight * local_input[j][p+2][q+14];
                       // input[x_position_1 + p * kInImSize + y_position_7 + q];
-          res10_17 += curr_weight *
-                      local_input[j][p+3][q+14];
+          res10_17 += curr_weight * local_input[j][p+3][q+14];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_7 + q];
-          res01_17 += curr_weight *
-                      local_input[j][p+2][q+15];
+          res01_17 += curr_weight * local_input[j][p+2][q+15];
                       // input[x_position_1 + p * kInImSize + y_position_7 + 1 + q];
-          res11_17 += curr_weight *
-                      local_input[j][p+3][q+15];
+          res11_17 += curr_weight * local_input[j][p+3][q+15];
                       // input[x_position_1 + (1 + p) * kInImSize + y_position_7 + 1 + q];
         }
       }
