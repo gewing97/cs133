@@ -7,6 +7,7 @@ __constant int kOutImSize = 112;
 __kernel
 void CnnKernel(__global const float* input, __global const float* weight,
                __global const float* bias, __global float* output) {
+  int layer = get_global_id(0);  
   int layer_size = kOutImSize * kOutImSize;
 
   float res00_00, res01_00, res10_00, res11_00;
@@ -57,7 +58,6 @@ void CnnKernel(__global const float* input, __global const float* weight,
   float res00_17, res01_17, res10_17, res11_17;
   res00_17 = res01_17 = res10_17 = res11_17 = bias[layer];
 
-  int layer = get_global_id(0);  
   int pixel_x = get_global_id(1) * 2;
   int pixel_y = get_global_id(2) * 8;
 
@@ -96,7 +96,7 @@ void CnnKernel(__global const float* input, __global const float* weight,
   //   }   
     // printf("finished loading section %d\n", i);
     int index_x = local_layer % 8;
-    int index_y = (local_layer / 8) * 5
+    int index_y = (local_layer / 8) * 5;
     for (int j = 0; j < 256; ++j) {
       for( int p = 0; p < 5; p++) {
         //asumes (32 8 1)
