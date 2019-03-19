@@ -18,7 +18,7 @@ void CnnKernel(__constant float* input, __constant float* weight,
                __constant float* bias, __global float* output) {
 
                     // Allocate memory on heap to avoid stack overflow.
-  static float C[kNum][kImSize][kImSize];
+  float C[kNum][kImSize][kImSize];
 
   for (int i = 0; i < kNum; ++i) {
     for (int h = 0; h < kImSize; ++h) {
