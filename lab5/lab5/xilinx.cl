@@ -20,7 +20,7 @@ void CnnKernel(__constant float* input, __constant float* weight,
     int layer_size = kOutImSize * kOutImSize;
 
     for (int i = 0; i < kNum; ++i) {
-        float C[kNum][kImSize][kImSize];
+        float C[kImSize][kImSize];
         for (int h = 0; h < kImSize; ++h) {
             for (int w = 0; w < kImSize; ++w)
                 C[h][w] = bias[i];
