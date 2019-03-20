@@ -19,7 +19,7 @@ void CnnKernel(__constant float* input, __constant float* weight,
 
     int layer_size = kOutImSize * kOutImSize;
     
-    
+    __attribute__((xcl_pipeline_loop))
     layer: for(int i = 0; i < kNum; i++){
       out_x: for(int w = 0; w < kOutImSize; w++){
         out_y: for(int h = 0; h < kOutImSize; h++){
