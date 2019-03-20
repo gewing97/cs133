@@ -16,8 +16,6 @@ __constant int kOutImSize = 112;
 __kernel __attribute__((reqd_work_group_size(1, 1, 1)))
 void CnnKernel(__constant float* input, __constant float* weight,
                __constant float* bias, __global float* output) {
-    
-    int layer_size = kOutImSize * kOutImSize;
 
     for (int i = 0; i < kNum; ++i) {
         float C[kImSize][kImSize];
@@ -42,14 +40,14 @@ void CnnKernel(__constant float* input, __constant float* weight,
     // ReLU
         for (int h = 0; h < kImSize; ++h) {
             for (int w = 0; w < kImSize; ++w) {
-                C[h][w] = max(0.f, C[i][h][w]);
+                C[h][w] = max(0.f, C[h][w]);
             }
         }
 
     // Max pooling
         for (int h = 0; h < kOutImSize; ++h) {
             for (int w = 0; w < kOutImSize; ++w) {
-                output[i][h][w] = max(
+                output(i,h,w) = max(
                     max(C[h * 2][w * 2    ], C[h * 2 + 1][w * 2    ]),
                     max(C[h * 2][w * 2 + 1], C[h * 2 + 1][w * 2 + 1]));
             }
