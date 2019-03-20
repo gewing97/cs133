@@ -27,6 +27,7 @@ void CnnKernel(__constant float* input, __constant float* weight,
     // Convolution
         for (int j = 0; j < kNum; ++j) {
             float local_weight[kKernel][kKernel];
+            __attribute__((xcl_pipeline_loop))
             for (int p = 0; p < kKernel; p++){
                 for (int q =0; q < kKernel; q++){
                     local_weight[p][q] = weight(i,j,p,q);
