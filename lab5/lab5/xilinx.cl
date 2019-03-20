@@ -33,8 +33,8 @@ void CnnKernel(__constant float* input, __constant float* weight,
                     local_weight[p][q] = weight(i,j,p,q);
                 }
             }
-            __attribute__((xcl_pipeline_loop))
             for (int h = 0; h < kImSize; ++h) {
+                __attribute__((xcl_pipeline_loop))
                 for (int w = 0; w < kImSize; ++w) {
                     float temp = 0;
                     for (int p = 0; p < kKernel; ++p) {
@@ -46,6 +46,8 @@ void CnnKernel(__constant float* input, __constant float* weight,
             }
         }
 
+    // Relu
+        // __attribute__((xcl_pipeline_loop))
         for (int h = 0; h < kImSize; ++h) {
             for (int w = 0; w < kImSize; ++w) {
                 C[h][w] = C[h][w] < 0.f ? 0 : C[h][w];
@@ -53,6 +55,7 @@ void CnnKernel(__constant float* input, __constant float* weight,
         }
 
     // Max pooling
+        // __attribute__((xcl_pipeline_loop))
         for (int h = 0; h < kOutImSize; ++h) {
             for (int w = 0; w < kOutImSize; ++w) {
                 output(i,h,w) = max(
