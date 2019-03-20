@@ -24,28 +24,28 @@ void CnnKernel(__constant float* input, __constant float* weight,
         out_x: for (int w = 0; w < kOutImSize / 2; w++){
             out_y: for (int h = 0; h < kOutImSize / 4; h++){
                 float res00_00, res01_00, res10_00, res11_00;
-                res00_00 = res01_00 = res10_00 = res11_00 = bias[layer];
+                res00_00 = res01_00 = res10_00 = res11_00 = bias[i];
 
                 float res00_01, res01_01, res10_01, res11_01;
-                res00_01 = res01_01 = res10_01 = res11_01 = bias[layer];
+                res00_01 = res01_01 = res10_01 = res11_01 = bias[i];
 
                 float res00_10, res01_10, res10_10, res11_10;
-                res00_10 = res01_10 = res10_10 = res11_10 = bias[layer];
+                res00_10 = res01_10 = res10_10 = res11_10 = bias[i];
 
                 float res00_11, res01_11, res10_11, res11_11;
-                res00_11 = res01_11 = res10_11 = res11_11 = bias[layer];
+                res00_11 = res01_11 = res10_11 = res11_11 = bias[i];
 
                 float res00_02, res01_02, res10_02, res11_02;
-                res00_02 = res01_02 = res10_02 = res11_02 = bias[layer];
+                res00_02 = res01_02 = res10_02 = res11_02 = bias[i];
 
                 float res00_03, res01_03, res10_03, res11_03;
-                res00_03 = res01_03 = res10_03 = res11_03 = bias[layer];
+                res00_03 = res01_03 = res10_03 = res11_03 = bias[i];
 
                 float res00_12, res01_12, res10_12, res11_12;
-                res00_12 = res01_12 = res10_12 = res11_12 = bias[layer];
+                res00_12 = res01_12 = res10_12 = res11_12 = bias[i];
 
                 float res00_13, res01_13, res10_13, res11_13;
-                res00_13 = res01_13 = res10_13 = res11_13 = bias[layer];
+                res00_13 = res01_13 = res10_13 = res11_13 = bias[i];
 
                 // Convolution
                 // int weight_layer_position = i * kNum * kKernel * kKernel;
