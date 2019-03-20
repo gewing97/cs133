@@ -50,56 +50,56 @@ void CnnKernel(__constant float* input, __constant float* weight,
                 // Convolution
                 // int weight_layer_position = i * kNum * kKernel * kKernel;
                 // int input_layer_size = kInImSize*kInImSize;
-                // int x_position_0 = w * kInImSize;
-                // int x_position_1 = (w + 1) * kInImSize;
-                // int y_position_0 = h;
-                // int y_position_1 = h + 1;
-                // int y_position_2 = h + 2; 
-                // int y_position_3 = h + 3;  
+                int x_position_0 = w * 2;
+                int x_position_1 = (w + 1) * 2;
+                int y_position_0 = h * 2;
+                int y_position_1 = (h + 1) * 2;
+                int y_position_2 = (h + 2) * 2; 
+                int y_position_3 = (h + 3) * 2;  
                 // __attribute__((xcl_pipeline_loop))  
                 convolutions: for (int j = 0; j < kNum; ++j) {
                     weight_x: for (int p = 0; p < kKernel; ++p) {
                         weight_y: for (int q = 0; q < kKernel; ++q) {
                             float curr_weight = weight(i, j, p, q);// weight[weight_layer_position + (p * kKernel) + q];
-                            res00_00 += curr_weight * input(j, w + p, h + q);
-                            res10_00 += curr_weight * input(j, w + p + 1, h + q);
-                            res01_00 += curr_weight * input(j, w + p, h + q + 1);
-                            res11_00 += curr_weight * input(j, w + p + 1, h + q + 1);
+                            res00_00 += curr_weight * input(j, x_position_0 + p, y_position_0 + q);
+                            res10_00 += curr_weight * input(j, x_position_0 + p + 1, y_position_0 + q);
+                            res01_00 += curr_weight * input(j, x_position_0 + p, y_position_0 + q + 1);
+                            res11_00 += curr_weight * input(j, x_position_0 + p + 1, y_position_0 + q + 1);
 
-                            res00_01 += curr_weight * input(j, w + p, h + 1 + q);
-                            res10_01 += curr_weight * input(j, w + p + 1, h + 1 + q);
-                            res01_01 += curr_weight * input(j, w + p, h + 2 + q);
-                            res11_01 += curr_weight * input(j, w + p + 1, h + 2 + q);
+                            res00_01 += curr_weight * input(j, x_position_0 + p, y_position_1 + q);
+                            res10_01 += curr_weight * input(j, x_position_0 + p + 1, y_position_1 + q);
+                            res01_01 += curr_weight * input(j, x_position_0 + p, y_position_1 + 1 + q);
+                            res11_01 += curr_weight * input(j, x_position_0 + p + 1, y_position_1 + 1 + q);
 
-                            res00_10 += curr_weight * input(j, w + p + 1, h + q);
-                            res10_10 += curr_weight * input(j, w + p + 2, h + q);
-                            res01_10 += curr_weight * input(j, w + p + 1, h + 1 + q);
-                            res11_10 += curr_weight * input(j, w + p + 2, h + 1 + q);
+                            res00_10 += curr_weight * input(j, x_position_1 + p, y_position_0 + q);
+                            res10_10 += curr_weight * input(j, x_position_1 + p + 1, y_position_0 + q);
+                            res01_10 += curr_weight * input(j, x_position_1 + p, y_position_0 + 1 + q);
+                            res11_10 += curr_weight * input(j, x_position_1 + p + 1, y_position_0 + 1 + q);
 
-                            res00_11 += curr_weight * input(j, w + p + 1, h + 1 + q);
-                            res10_11 += curr_weight * input(j, w + p + 2, h + 1 + q);
-                            res01_11 += curr_weight * input(j, w + p + 1, h + 2 + q);
-                            res11_11 += curr_weight * input(j, w + p + 2, h + 2 + q);
+                            res00_11 += curr_weight * input(j, x_position_1 + p, y_position_1 + q);
+                            res10_11 += curr_weight * input(j, x_position_1 + p + 1, y_position_1 + q);
+                            res01_11 += curr_weight * input(j, x_position_1 + p, y_position_1 + 1 + q);
+                            res11_11 += curr_weight * input(j, x_position_1 + p + 1, y_position_1 + 1 + q);
 
-                            res00_02 += curr_weight * input(j, w + p, h + 2 + q);
-                            res10_02 += curr_weight * input(j, w + p + 1, h + 2 + q);
-                            res01_02 += curr_weight * input(j, w + p, h + 3 + q);
-                            res11_02 += curr_weight * input(j, w + p + 1, h + 3 + q);
+                            res00_02 += curr_weight * input(j, x_position_0 + p, y_position_2 + q);
+                            res10_02 += curr_weight * input(j, x_position_0 + p + 1, y_position_2 + q);
+                            res01_02 += curr_weight * input(j, x_position_0 + p, y_position_2 + 1 + q);
+                            res11_02 += curr_weight * input(j, x_position_0 + p + 1, y_position_2 + 1 + q);
 
-                            res00_03 += curr_weight * input(j, w + p, h + 3 + q);
-                            res10_03 += curr_weight * input(j, w + p + 1, h + 3 + q);
-                            res01_03 += curr_weight * input(j, w + p, h + 4 + q);
-                            res11_03 += curr_weight * input(j, w + p + 1, h + 4 + q);
+                            res00_03 += curr_weight * input(j, x_position_0 + p, y_position_3 + q);
+                            res10_03 += curr_weight * input(j, x_position_0 + p + 1, y_position_3 + q);
+                            res01_03 += curr_weight * input(j, x_position_0 + p, y_position_3 + 1 + q);
+                            res11_03 += curr_weight * input(j, x_position_0 + p + 1, y_position_3 + 1 + q);
 
-                            res00_12 += curr_weight * input(j, w + p + 1, h + 2 + q);
-                            res10_12 += curr_weight * input(j, w + p + 2, h + 2 + q);
-                            res01_12 += curr_weight * input(j, w + p + 1, h + 3 + q);
-                            res11_12 += curr_weight * input(j, w + p + 2, h + 3 + q);
+                            res00_12 += curr_weight * input(j, x_position_1 + p, y_position_2 + q);
+                            res10_12 += curr_weight * input(j, x_position_1 + p + 1, y_position_2 + q);
+                            res01_12 += curr_weight * input(j, x_position_1 + p, y_position_2 + 1 + q);
+                            res11_12 += curr_weight * input(j, x_position_1 + p + 1, y_position_2 + 1 + q);
 
-                            res00_13 += curr_weight * input(j, w + p + 1, h + 3 + q);
-                            res10_13 += curr_weight * input(j, w + p + 2, h + 3 + q);
-                            res01_13 += curr_weight * input(j, w + p + 1, h + 4 + q);
-                            res11_13 += curr_weight * input(j, w + p + 2, h + 4 + q);
+                            res00_13 += curr_weight * input(j, x_position_1 + p, y_position_3 + q);
+                            res10_13 += curr_weight * input(j, x_position_1 + p + 1, y_position_3 + q);
+                            res01_13 += curr_weight * input(j, x_position_1 + p, y_position_3 + 1 + q);
+                            res11_13 += curr_weight * input(j, x_position_1 + p + 1, y_position_3 + 1 + q);
                         }
                     }
                     // weight_layer_position += kKernel * kKernel;
