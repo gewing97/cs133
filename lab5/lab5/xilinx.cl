@@ -27,20 +27,21 @@ void CnnKernel(__constant float* input, __constant float* weight,
     // Convolution
         for (int j = 0; j < kNum; ++j) {
             for (int h = 0; h < kImSize; ++h) {
+                float local_weight[kKernel][kKernel];
+                for (int p = 0; p < kKernel; p++){
+                    for (int q =0; q < kKernel; q++){
+                        local_weight = weight(i,j,p,q);
+                    }
+                }
                 __attribute__((xcl_pipeline_loop))
                 for (int w = 0; w < kImSize; ++w) {
                     for (int p = 0; p < kKernel; ++p) {
+                        float temp = 0;
                         for (int q = 0; q < kKernel; ++q)
-                            C[h][w] += weight(i,j,p,q) * input(j,h + p,w + q);
+                            C[h][w] += local_weight[p][q] * input(j,h + p,w + q);
                     }
+                    C[h][w] = C[h][w] < 0 ? 0.f : C[h][w];
                 }
-            }
-        }
-
-    // ReLU
-        for (int h = 0; h < kImSize; ++h) {
-            for (int w = 0; w < kImSize; ++w) {
-                C[h][w] = max(0.f, C[h][w]);
             }
         }
 
