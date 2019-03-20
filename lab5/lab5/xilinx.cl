@@ -19,7 +19,7 @@ void CnnKernel(__constant float* input, __constant float* weight,
 
     int layer_size = kOutImSize * kOutImSize;
     
-    __attribute__((xcl_pipeline_loop))
+    // __attribute__((xcl_pipeline_loop)) complained about unrolling x
     layer: for(int i = 0; i < kNum; i++){
       out_x: for(int w = 0; w < kOutImSize; w++){
         out_y: for(int h = 0; h < kOutImSize; h++){
@@ -30,9 +30,10 @@ void CnnKernel(__constant float* input, __constant float* weight,
             int input_layer_size = kInImSize*kInImSize;
             int x_position_0 = (w * 2) * kInImSize;
             int y_position_0 = (h * 2);
+            __attribute__((xcl_pipeline_loop))
             convolutions: for (int j = 0; j < kNum; ++j) {
               weight_x: for (int p = 0; p < kKernel; ++p) {
-                __attribute__((opencl_unroll_hint(2)))
+                // __attribute__((opencl_unroll_hint(2)))
                 weight_y: for (int q = 0; q < kKernel; ++q) {
                   float curr_weight =  weight[weight_layer_position + (p * kKernel) + q];
                   res00_00 += curr_weight *
