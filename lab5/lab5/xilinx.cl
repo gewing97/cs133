@@ -58,6 +58,7 @@ void CnnKernel(__constant float* input, __constant float* weight,
                 int y_position_1 = ((pixel_y + 1) * 2);
                 int y_position_2 = ((pixel_y + 2) * 2); 
                 int y_position_3 = ((pixel_y + 3) * 2);  
+                __attribute__((xcl_pipeline_loop))
                 convolution: for (int j = 0; j < kNum; ++j) {
                     weight_x: for (int p = 0; p < kKernel; ++p) {
                         weight_y: for (int q = 0; q < kKernel; ++q) {
