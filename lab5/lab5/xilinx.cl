@@ -19,30 +19,36 @@ void CnnKernel(__constant float* input, __constant float* weight,
 
     for (int i = 0; i < kNum; ++i) {
         float C[kImSize][kImSize];
-        // for (int h = 0; h < kImSize; ++h) {
-        //     for (int w = 0; w < kImSize; ++w)
-        //         C[h][w] = bias[i];
-        //     }
+        for (int h = 0; h < kImSize; ++h) {
+            for (int w = 0; w < kImSize; ++w)
+                C[h][w] = bias[i];
+            }
 
     // Convolution
         for (int j = 0; j < kNum; ++j) {
-            for (int h = 0; h < kImSize; ++h) {
-                float local_weight[kKernel][kKernel];
-                for (int p = 0; p < kKernel; p++){
-                    for (int q =0; q < kKernel; q++){
-                        local_weight[p][q] = weight(i,j,p,q);
-                    }
+            float local_weight[kKernel][kKernel];
+            for (int p = 0; p < kKernel; p++){
+                for (int q =0; q < kKernel; q++){
+                    local_weight[p][q] = weight(i,j,p,q);
                 }
+            }
+            for (int h = 0; h < kImSize; ++h) {
                 __attribute__((xcl_pipeline_loop))
                 for (int w = 0; w < kImSize; ++w) {
-                    float temp = bias[i];
+                    float temp = 0;
                     for (int p = 0; p < kKernel; ++p) {
                         for (int q = 0; q < kKernel; ++q)
                             temp += local_weight[p][q] * input(j,h + p,w + q);
                     }
-                    C[h][w] = temp < 0.f ? 0.f : temp;
+                    C[h][w] += temp;
                 }
             }
+        }
+
+        for (int h = 0; h < kImSize; ++h) {
+            for (int w = 0; w < kImSize; ++w) {
+                C[h][w] = C[h][w] < 0.f ? 0 : C[h][w];
+            }   
         }
 
     // Max pooling
