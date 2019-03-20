@@ -50,7 +50,7 @@ void CnnKernel(__constant float* input, __constant float* weight,
                                         input[x_position_0 + (1 + p) * kInImSize + y_position_0 + q];
                             res01_00 += curr_weight *
                                         input[x_position_0 + p * kInImSize + y_position_0 + 1 + q];
-                            res11_00 += weight[weight_layer_position + (p * kKernel) + q] *
+                            res11_00 += curr_weight *
                                         input[x_position_0 + (1 + p) * kInImSize + y_position_0 + 1 + q];
                         }
                     }
