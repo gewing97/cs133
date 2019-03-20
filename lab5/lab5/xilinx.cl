@@ -7,11 +7,11 @@ __constant int kOutImSize = 112;
 #define input(j, h, w) \
    input[((j) * kInImSize * kInImSize + (h) * kInImSize + (w))]
 #define weight(j, h, w, q) \
-    weight[(j * kNum * kKernel * kKernel) + (h * kKernel * kKernel) + (w * kKernel) + q]
+    weight[((j * kNum * kKernel * kKernel) + (h * kKernel * kKernel) + (w * kKernel) + q)]
 #define bias(j) \
     bias[j]
 #define output(j, h, w) \
-    output[(j * kOutImSize * kOutImSize) + (h * kOutImSize) + w]
+    output[((j * kOutImSize * kOutImSize) + (h * kOutImSize) + w)]
 
 __kernel __attribute__((reqd_work_group_size(1, 1, 1)))
 void CnnKernel(__constant float* input, __constant float* weight,
@@ -19,10 +19,10 @@ void CnnKernel(__constant float* input, __constant float* weight,
 
     for (int i = 0; i < kNum; ++i) {
         float C[kImSize][kImSize];
-        for (int h = 0; h < kImSize; ++h) {
-            for (int w = 0; w < kImSize; ++w)
-                C[h][w] = bias[i];
-            }
+        // for (int h = 0; h < kImSize; ++h) {
+        //     for (int w = 0; w < kImSize; ++w)
+        //         C[h][w] = bias[i];
+        //     }
 
     // Convolution
         for (int j = 0; j < kNum; ++j) {
@@ -30,17 +30,17 @@ void CnnKernel(__constant float* input, __constant float* weight,
                 float local_weight[kKernel][kKernel];
                 for (int p = 0; p < kKernel; p++){
                     for (int q =0; q < kKernel; q++){
-                        local_weight = weight(i,j,p,q);
+                        local_weight[p][q] = weight(i,j,p,q);
                     }
                 }
                 __attribute__((xcl_pipeline_loop))
                 for (int w = 0; w < kImSize; ++w) {
+                    float temp = bias[i];
                     for (int p = 0; p < kKernel; ++p) {
-                        float temp = 0;
                         for (int q = 0; q < kKernel; ++q)
-                            C[h][w] += local_weight[p][q] * input(j,h + p,w + q);
+                            temp += local_weight[p][q] * input(j,h + p,w + q);
                     }
-                    C[h][w] = C[h][w] < 0 ? 0.f : C[h][w];
+                    C[h][w] = temp < 0.f ? 0.f : temp;
                 }
             }
         }
