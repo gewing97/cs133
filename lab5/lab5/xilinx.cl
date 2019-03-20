@@ -17,6 +17,7 @@ __kernel __attribute__((reqd_work_group_size(1, 1, 1)))
 void CnnKernel(__constant float* input, __constant float* weight,
                __constant float* bias, __global float* output) {
 
+    int layer_size = kOutImSize * kOutImSize;
     
     // int num_layers = kNum / get_global_size(0);
     // int x_pixels = kOutImSize / get_global_size(1);
