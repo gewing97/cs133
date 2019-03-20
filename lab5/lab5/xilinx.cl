@@ -52,7 +52,6 @@ void CnnKernel(__constant float* input, __constant float* weight,
                 // Convolution
                 int weight_layer_position = i * kNum * kKernel * kKernel;
                 int input_layer_size = kInImSize*kInImSize;
-                int x_positions[] = { (pixel_x * 2) * kInImSize, ((pixel_x + 1) * 2) * kInImSize;}
                 int x_position_0 = (pixel_x * 2) * kInImSize;
                 int x_position_1 = ((pixel_x + 1) * 2) * kInImSize;
                 int y_position_0 = (pixel_y * 2);
@@ -85,6 +84,7 @@ void CnnKernel(__constant float* input, __constant float* weight,
 
                     float temp00_13, temp01_13, temp10_13, temp11_13;
                     temp00_13 = temp01_13 = temp10_13 = temp11_13 = 0;
+
                     weight_x: for (int p = 0; p < kKernel; ++p) {
                         weight_y: for (int q = 0; q < kKernel; ++q) {
                             float curr_weight =  weight[weight_layer_position + (p * kKernel) + q];
