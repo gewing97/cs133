@@ -30,7 +30,7 @@ void CnnKernel(__constant float* input, __constant float* weight,
             int input_layer_size = kInImSize*kInImSize;
             int x_position_0 = (w * 2) * kInImSize;
             int y_position_0 = (h * 2);
-            __attribute__((xcl_pipeline_loop))  
+            // __attribute__((xcl_pipeline_loop))  
             convolutions: for (int j = 0; j < kNum; ++j) {
               weight_x: for (int p = 0; p < kKernel; ++p) {
                 weight_y: for (int q = 0; q < kKernel; ++q) {
