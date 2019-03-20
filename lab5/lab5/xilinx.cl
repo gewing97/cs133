@@ -18,7 +18,9 @@ void CnnKernel(__constant float* input, __constant float* weight,
                __constant float* bias, __global float* output) {
 
     for (int i = 0; i < kNum; ++i) {
-        float C[kImSize][kImSize];
+        float C[kImSize][kImSize]
+        __attribute__((xcl_array_partition(cyclic, 8, 1)))
+        ;
         for (int h = 0; h < kImSize; ++h) {
             for (int w = 0; w < kImSize; ++w)
                 C[h][w] = bias[i];
@@ -26,15 +28,18 @@ void CnnKernel(__constant float* input, __constant float* weight,
 
     // Convolution
         for (int j = 0; j < kNum; ++j) {
-            float local_weight[kKernel][kKernel];
+            float local_weight[kKernel][kKernel]
+            __attribute__((xcl_array_partition(complete, 1)))
+            __attribute__((xcl_array_partition(complete, 2)))
+            ;
             __attribute__((xcl_pipeline_loop))
             for (int p = 0; p < kKernel; p++){
                 for (int q =0; q < kKernel; q++){
                     local_weight[p][q] = weight(i,j,p,q);
                 }
             }
+            __attribute__((xcl_pipeline_loop))
             for (int h = 0; h < kImSize; ++h) {
-                __attribute__((xcl_pipeline_loop))
                 for (int w = 0; w < kImSize; ++w) {
                     float temp = 0;
                     for (int p = 0; p < kKernel; ++p) {
@@ -47,7 +52,7 @@ void CnnKernel(__constant float* input, __constant float* weight,
         }
 
     // Relu
-        // __attribute__((xcl_pipeline_loop))
+        __attribute__((xcl_pipeline_loop))
         for (int h = 0; h < kImSize; ++h) {
             for (int w = 0; w < kImSize; ++w) {
                 C[h][w] = C[h][w] < 0.f ? 0 : C[h][w];
@@ -55,7 +60,7 @@ void CnnKernel(__constant float* input, __constant float* weight,
         }
 
     // Max pooling
-        // __attribute__((xcl_pipeline_loop))
+        __attribute__((xcl_pipeline_loop))
         for (int h = 0; h < kOutImSize; ++h) {
             for (int w = 0; w < kOutImSize; ++w) {
                 output(i,h,w) = max(
